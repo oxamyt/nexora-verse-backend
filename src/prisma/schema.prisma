@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               Int       @id @default(autoincrement())
+  username         String    @unique
+  password         String
+  posts            Post[]
+  profile          Profile?
+  avatarUrl        String    @default("https://res.cloudinary.com/dehoidlo0/image/upload/v1734176820/messaging-app/r49pwufgvi6inrjc8hlj.png")
+  messagesSent     Message[] @relation("Sent Message")
+  messagesReceived Message[] @relation("Received Message")
+  likes            Like[]
+  followers        Follow[]  @relation("Follower")
+  following        Follow[]  @relation("Following")
+  comments         Comment[]
+}
+
+model Profile {
+  id        Int      @id @default(autoincrement())
+  bio       String?
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int      @unique
+}
+
+model Post {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  title     String
+  body      String?
+  likes     Like[]
+  User      User      @relation(fields: [userId], references: [id])
+  userId    Int
+  comments  Comment[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+  User      User     @relation(fields: [userId], references: [id])
+  postId    Int
+  Post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  content   String
+}
+
+model Message {
+  id         Int      @id @default(autoincrement())
+  senderId   Int
+  receiverId Int
+  body    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  sender     User     @relation("Sent Message", fields: [senderId], references: [id])
+  receiver   User     @relation("Received Message", fields: [receiverId], references: [id])
+}
+
+model Like {
+  id     Int  @id @default(autoincrement())
+  postId Int
+  userId Int
+  Post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  User   User @relation(fields: [userId], references: [id])
+
+  @@unique([postId, userId])
+}
+
+model Follow {
+  id         Int  @id @default(autoincrement())
+  followerId Int
+  followedId Int
+  follower   User @relation("Follower", fields: [followerId], references: [id])
+  following  User @relation("Following", fields: [followedId], references: [id])
+
+   @@unique([followerId, followedId])
+}
