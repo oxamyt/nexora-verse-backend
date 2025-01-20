@@ -67,4 +67,41 @@ describe("Auth Router", async () => {
     expect(response.body.success).toBe(false);
     expect(response.body.error).toBe("Username already exists");
   });
+
+  it("should login a user and return a JWT token", async () => {
+    await request(app).post("/auth/signup").send({
+      username: "john",
+      password: "password123",
+      confirm: "password123",
+    });
+
+    const loginResponse = await request(app)
+      .post("/auth/login")
+      .send({
+        username: "john",
+        password: "password123",
+      })
+      .expect(200);
+
+    expect(loginResponse.body.token).toBeDefined();
+    expect(loginResponse.body.token).toBeTypeOf("string");
+  });
+
+  it("should not login a user with wrong credentials", async () => {
+    await request(app).post("/auth/signup").send({
+      username: "john",
+      password: "password123",
+      confirm: "password123",
+    });
+
+    const loginResponse = await request(app)
+      .post("/auth/login")
+      .send({
+        username: "john",
+        password: "password1234",
+      })
+      .expect(400);
+
+    expect(loginResponse.body.token).not.toBeDefined();
+  });
 });

@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { UserSignUpData } from "../types/types";
+import { UserData } from "../types/types";
 
 const prisma = new PrismaClient();
 
@@ -15,7 +15,7 @@ async function findUser({ username }: { username: string }) {
   }
 }
 
-async function createUser({ username, password }: UserSignUpData) {
+async function createUser({ username, password }: UserData) {
   try {
     return await prisma.user.create({
       data: {

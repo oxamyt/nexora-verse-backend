@@ -1,4 +1,4 @@
-import { userSignup } from "../services/authServices";
+import { userSignup, userLogin } from "../services/authServices";
 import { Request, Response } from "express";
 
 async function signup(req: Request, res: Response) {
@@ -13,4 +13,16 @@ async function signup(req: Request, res: Response) {
   }
 }
 
-export { signup };
+async function login(req: Request, res: Response) {
+  try {
+    const { username, password } = req.body;
+
+    const loginResponse = await userLogin({ username, password });
+    res.status(!loginResponse.success ? 400 : 200).json(loginResponse);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error during login" });
+  }
+}
+
+export { signup, login };

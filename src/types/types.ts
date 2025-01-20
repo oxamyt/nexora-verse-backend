@@ -1,6 +1,6 @@
-interface UserSignUpData {
+interface UserData {
   username: string;
   password: string;
 }
 
-export { UserSignUpData };
+export { UserData };

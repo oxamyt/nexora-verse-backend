@@ -1,8 +1,9 @@
 import bcrypt from "bcryptjs";
 import { findUser, createUser } from "../models/user";
-import { UserSignUpData } from "../types/types";
+import { UserData } from "../types/types";
+import signToken from "../utils/signToken";
 
-async function userSignup({ username, password }: UserSignUpData) {
+async function userSignup({ username, password }: UserData) {
   const user = await findUser({ username });
 
   if (user) {
@@ -20,8 +21,30 @@ async function userSignup({ username, password }: UserSignUpData) {
     return { success: true };
   } catch (error) {
     console.error(error);
-    return { success: false, error: "internal server error" };
+    return { success: false, error: "Internal server error during signup" };
   }
 }
 
-export { userSignup };
+async function userLogin({ username, password }: UserData) {
+  const user = await findUser({ username });
+
+  if (!user) {
+    return { success: false, error: "Invalid username or password" };
+  }
+
+  try {
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return { success: false, error: "Invalid username or password" };
+    }
+
+    const token = signToken({ userId: user.id });
+    return { success: true, token, message: "Login successful" };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: "Internal server error during login" };
+  }
+}
+
+export { userSignup, userLogin };
