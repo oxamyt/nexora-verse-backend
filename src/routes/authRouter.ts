@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router } from "express";
 import { validateData } from "../middlewares/validationMiddleware";
 import { userSignupSchema, userLoginSchema } from "../validation/schemas";
 import { signup, login, githubLogin } from "../controllers/authController";

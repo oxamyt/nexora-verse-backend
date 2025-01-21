@@ -15,6 +15,19 @@ async function findUser({ username }: { username: string }) {
   }
 }
 
+async function fetchUsers() {
+  try {
+    return await prisma.user.findMany({
+      select: {
+        username: true,
+        avatarUrl: true,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 async function createUser({ username, password }: UserData) {
   try {
     return await prisma.user.create({
@@ -28,4 +41,4 @@ async function createUser({ username, password }: UserData) {
   }
 }
 
-export { findUser, createUser };
+export { findUser, fetchUsers, createUser };
