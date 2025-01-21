@@ -28,6 +28,38 @@ async function fetchUsers() {
   }
 }
 
+async function fetchById({ id }: { id: number }) {
+  try {
+    return await prisma.user.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        username: true,
+        avatarUrl: true,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function fetchByUsername({ username }: { username: string }) {
+  try {
+    return await prisma.user.findUnique({
+      where: {
+        username,
+      },
+      select: {
+        username: true,
+        avatarUrl: true,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 async function createUser({ username, password }: UserData) {
   try {
     return await prisma.user.create({
@@ -41,4 +73,4 @@ async function createUser({ username, password }: UserData) {
   }
 }
 
-export { findUser, fetchUsers, createUser };
+export { findUser, fetchUsers, fetchById, fetchByUsername, createUser };

@@ -41,7 +41,12 @@ async function userLogin({ username, password }: UserData) {
       }
     }
     const token = signToken({ userId: user.id });
-    return { success: true, token, message: "Login successful." };
+    return {
+      success: true,
+      token,
+      userId: user.id,
+      message: "Login successful.",
+    };
   } catch (error) {
     console.error(error);
     return { success: false, error: "Internal server error during login." };

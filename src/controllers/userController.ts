@@ -1,10 +1,20 @@
 import { Request, Response } from "express";
-import { fetchUsers } from "../models/user";
+import { fetchUsers, fetchById, fetchByUsername } from "../models/user";
 
 async function getUsers(req: Request, res: Response) {
   try {
-    const users = await fetchUsers();
-    res.status(200).json(users);
+    const { id, username } = req.query;
+
+    if (id) {
+      const user = await fetchById({ id: parseInt(id as string) });
+      res.status(200).json(user);
+    } else if (username) {
+      const user = await fetchByUsername({ username: username as string });
+      res.status(200).json(user);
+    } else {
+      const users = await fetchUsers();
+      res.status(200).json(users);
+    }
   } catch (error) {
     console.error(error);
     res
