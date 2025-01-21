@@ -65,7 +65,7 @@ describe("Auth Router", async () => {
       .expect(400);
 
     expect(response.body.success).toBe(false);
-    expect(response.body.error).toBe("Username already exists");
+    expect(response.body.error).toBe("Username already exists.");
   });
 
   it("should login a user and return a JWT token", async () => {

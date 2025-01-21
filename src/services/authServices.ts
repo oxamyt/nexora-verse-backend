@@ -7,7 +7,7 @@ async function userSignup({ username, password }: UserData) {
   const user = await findUser({ username });
 
   if (user) {
-    return { success: false, error: "Username already exists" };
+    return { success: false, error: "Username already exists." };
   }
 
   try {
@@ -15,13 +15,13 @@ async function userSignup({ username, password }: UserData) {
     const newUser = await createUser({ username, password: hashedPassword });
 
     if (!newUser) {
-      return { success: false, error: "Error creating a user" };
+      return { success: false, error: "Error creating a user." };
     }
 
     return { success: true };
   } catch (error) {
     console.error(error);
-    return { success: false, error: "Internal server error during signup" };
+    return { success: false, error: "Internal server error during signup." };
   }
 }
 
@@ -29,21 +29,22 @@ async function userLogin({ username, password }: UserData) {
   const user = await findUser({ username });
 
   if (!user) {
-    return { success: false, error: "Invalid username or password" };
+    return { success: false, error: "Invalid username or password." };
   }
 
   try {
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (user.password) {
+      const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    if (!isPasswordValid) {
-      return { success: false, error: "Invalid username or password" };
+      if (!isPasswordValid) {
+        return { success: false, error: "Invalid username or password." };
+      }
     }
-
     const token = signToken({ userId: user.id });
-    return { success: true, token, message: "Login successful" };
+    return { success: true, token, message: "Login successful." };
   } catch (error) {
     console.error(error);
-    return { success: false, error: "Internal server error during login" };
+    return { success: false, error: "Internal server error during login." };
   }
 }
 

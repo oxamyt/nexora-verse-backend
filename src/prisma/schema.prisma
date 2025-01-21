@@ -16,7 +16,8 @@ datasource db {
 model User {
   id               Int       @id @default(autoincrement())
   username         String    @unique
-  password         String
+  password         String?
+  githubId         String? @unique
   posts            Post[]
   profile          Profile?
   avatarUrl        String    @default("https://res.cloudinary.com/dehoidlo0/image/upload/v1734176820/messaging-app/r49pwufgvi6inrjc8hlj.png")
