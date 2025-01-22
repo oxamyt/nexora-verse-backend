@@ -4,10 +4,12 @@ import authRouter from "../routes/authRouter";
 import userRouter from "../routes/userRouter";
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import { cleanupDatabase } from "../utils/cleanupDatabase";
+import passport from "../utils/passportConfig";
 
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
+app.use(passport.initialize());
 app.use(express.json());
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
@@ -96,5 +98,63 @@ describe("Auth Router", async () => {
 
     expect(fetchIdResponse.body).toMatchObject({ username: "john" });
     expect(fetchUsernameResponse.body).toMatchObject({ username: "harry" });
+  });
+
+  it("user should be able to update user/profile", async () => {
+    await request(app).post("/auth/signup").send({
+      username: "john",
+      password: "password123",
+      confirm: "password123",
+    });
+
+    const loginResponse = await request(app)
+      .post("/auth/login")
+      .send({
+        username: "john",
+        password: "password123",
+      })
+      .expect(200);
+
+    const token = loginResponse.body.token;
+
+    const response = await request(app)
+      .patch("/users")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ username: "peter", bio: "I'm just a peter." })
+      .expect(200);
+
+    expect(response.body.success).toBe(true);
+  });
+
+  it("user should not be able to update user/profile to existing username", async () => {
+    await request(app).post("/auth/signup").send({
+      username: "john",
+      password: "password123",
+      confirm: "password123",
+    });
+
+    await request(app).post("/auth/signup").send({
+      username: "peter",
+      password: "password123",
+      confirm: "password123",
+    });
+
+    const loginResponse = await request(app)
+      .post("/auth/login")
+      .send({
+        username: "john",
+        password: "password123",
+      })
+      .expect(200);
+
+    const token = loginResponse.body.token;
+
+    const response = await request(app)
+      .patch("/users")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ username: "peter", bio: "I'm just a peter." })
+      .expect(400);
+
+    expect(response.body.success).toBe(false);
   });
 });

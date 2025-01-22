@@ -1,4 +1,8 @@
-import { userSignup, userLogin } from "../services/authServices";
+import {
+  userSignup,
+  userLogin,
+  userGithubLogin,
+} from "../services/authServices";
 import { Request, Response } from "express";
 import signToken from "../utils/signToken";
 
@@ -31,10 +35,8 @@ async function githubLogin(req: Request, res: Response) {
 
   try {
     if (user) {
-      const token = signToken({ userId: parseInt(user.id) });
-      res
-        .status(200)
-        .json({ success: true, token, user, message: "Login successful." });
+      const githubAuthResponse = await userGithubLogin(user);
+      res.status(200).json(githubAuthResponse);
     } else {
       res.status(400).json({ success: false, error: "No user detected." });
     }

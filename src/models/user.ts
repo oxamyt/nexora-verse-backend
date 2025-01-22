@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { UserData } from "../types/types";
+import { UserData, UserUpdateData } from "../types/types";
 
 const prisma = new PrismaClient();
 
@@ -73,4 +73,26 @@ async function createUser({ username, password }: UserData) {
   }
 }
 
-export { findUser, fetchUsers, fetchById, fetchByUsername, createUser };
+async function updateUsername({ username, id }: UserUpdateData) {
+  try {
+    return await prisma.user.update({
+      where: { id },
+      data: { username },
+      select: {
+        username: true,
+        id: true,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export {
+  findUser,
+  fetchUsers,
+  fetchById,
+  fetchByUsername,
+  createUser,
+  updateUsername,
+};

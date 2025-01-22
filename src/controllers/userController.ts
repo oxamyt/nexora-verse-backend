@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { fetchUsers, fetchById, fetchByUsername } from "../models/user";
+import { patchUser } from "../services/userServices";
 
 async function getUsers(req: Request, res: Response) {
   try {
@@ -23,4 +24,30 @@ async function getUsers(req: Request, res: Response) {
   }
 }
 
-export { getUsers };
+async function updateUser(req: Request, res: Response) {
+  try {
+    const { username, bio } = req.body;
+    const user = req.user;
+
+    if (user) {
+      const updatedUser = await patchUser({
+        username,
+        bio,
+        id: parseInt(user.id),
+      });
+      if (updatedUser) {
+        res.status(updatedUser.success === true ? 200 : 400).json(updatedUser);
+      }
+    } else {
+      res.status(400).json({ success: false, error: "No user detected." });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      error: "Internal server error during updating user",
+    });
+  }
+}
+
+export { getUsers, updateUser };

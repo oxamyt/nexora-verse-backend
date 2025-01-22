@@ -36,4 +36,26 @@ const userLoginSchema = z.object({
 
 export type userLoginSchema = z.infer<typeof userLoginSchema>;
 
-export { userSignupSchema, userLoginSchema };
+const updateData = z
+  .object({
+    username: z
+      .string()
+      .trim()
+      .min(3, { message: "Username must be at least 3 characters long." })
+      .max(15, { message: "Username must not exceed 15 characters." })
+      .optional(),
+    bio: z
+      .string()
+      .trim()
+      .min(3, { message: "Bio must be at least 3 characters long." })
+      .max(80, { message: "Bio must not exceed 80 characters." })
+      .optional(),
+  })
+  .refine((data) => data.username || data.bio, {
+    message: "At least one of 'username' or 'bio' must be provided.",
+    path: ["username", "bio"],
+  });
+
+export type updateData = z.infer<typeof updateData>;
+
+export { userSignupSchema, userLoginSchema, updateData };

@@ -3,6 +3,12 @@ interface UserData {
   password: string;
 }
 
+interface UserUpdateData {
+  username?: string;
+  bio?: string;
+  id: number;
+}
+
 declare global {
   namespace Express {
     interface User {
@@ -11,4 +17,4 @@ declare global {
   }
 }
 
-export { UserData };
+export { UserData, UserUpdateData };
