@@ -36,7 +36,7 @@ const userLoginSchema = z.object({
 
 export type userLoginSchema = z.infer<typeof userLoginSchema>;
 
-const updateData = z
+const updateUserDataSchema = z
   .object({
     username: z
       .string()
@@ -46,7 +46,6 @@ const updateData = z
       .optional(),
     bio: z
       .string()
-      .trim()
       .min(3, { message: "Bio must be at least 3 characters long." })
       .max(80, { message: "Bio must not exceed 80 characters." })
       .optional(),
@@ -56,6 +55,48 @@ const updateData = z
     path: ["username", "bio"],
   });
 
-export type updateData = z.infer<typeof updateData>;
+export type updateUserDataSchema = z.infer<typeof updateUserDataSchema>;
 
-export { userSignupSchema, userLoginSchema, updateData };
+const createPostSchema = z.object({
+  title: z
+    .string()
+    .trim()
+    .min(3, { message: "Title must be at least 3 characters long." })
+    .max(30, { message: "Title must not exceed 30 characters." }),
+  body: z
+    .string()
+    .min(10, { message: "Body must be at least 3 characters long." })
+    .max(300, { message: "Body must not exceed 80 characters." })
+    .optional(),
+});
+
+export type createPostSchema = z.infer<typeof createPostSchema>;
+
+const updatePostSchema = z
+  .object({
+    title: z
+      .string()
+      .trim()
+      .min(3, { message: "Title must be at least 3 characters long." })
+      .max(30, { message: "Title must not exceed 30 characters." })
+      .optional(),
+    body: z
+      .string()
+      .min(10, { message: "Body must be at least 3 characters long." })
+      .max(300, { message: "Body must not exceed 80 characters." })
+      .optional(),
+  })
+  .refine((data) => data.title || data.body, {
+    message: "At least one of 'title' or 'body' must be provided.",
+    path: ["title", "body"],
+  });
+
+export type updatePostSchema = z.infer<typeof createPostSchema>;
+
+export {
+  userSignupSchema,
+  userLoginSchema,
+  updateUserDataSchema,
+  createPostSchema,
+  updatePostSchema,
+};

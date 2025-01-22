@@ -3,6 +3,7 @@ import passport from "./utils/passportConfig";
 import cors from "cors";
 import authRouter from "./routes/authRouter";
 import userRouter from "./routes/userRouter";
+import postRouter from "./routes/postRouter";
 import session from "express-session";
 import "dotenv/config";
 
@@ -25,6 +26,7 @@ app.use(passport.session());
 
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
+app.use("/posts", userRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

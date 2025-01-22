@@ -117,13 +117,19 @@ describe("Auth Router", async () => {
 
     const token = loginResponse.body.token;
 
-    const response = await request(app)
+    const updateData = { username: "peter", bio: "I'm just a peter." };
+
+    const updateUserResponse = await request(app)
       .patch("/users")
       .set("Authorization", `Bearer ${token}`)
-      .send({ username: "peter", bio: "I'm just a peter." })
+      .send(updateData)
       .expect(200);
 
-    expect(response.body.success).toBe(true);
+    expect(updateUserResponse.body.success).toBe(true);
+    expect(updateUserResponse.body.updatedUser.username).toBe(
+      updateData.username
+    );
+    expect(updateUserResponse.body.updatedProfile.bio).toBe(updateData.bio);
   });
 
   it("user should not be able to update user/profile to existing username", async () => {

@@ -3,7 +3,6 @@ import { findUser, createUser } from "../models/user";
 import { createProfile } from "../models/profile";
 import { UserData } from "../types/types";
 import signToken from "../utils/signToken";
-import { objectInputType } from "zod";
 
 async function userSignup({ username, password }: UserData) {
   const user = await findUser({ username });
