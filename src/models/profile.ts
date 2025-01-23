@@ -3,21 +3,22 @@ import { UserUpdateData } from "../types/types";
 
 const prisma = new PrismaClient();
 
-async function createProfile({ id }: { id: number }) {
+async function createProfile({ userId }: { userId: number }) {
   try {
     return await prisma.profile.upsert({
-      where: { userId: id },
+      where: { userId },
       update: {},
       create: {
-        userId: id,
+        userId,
       },
     });
   } catch (error) {
-    console.error();
+    console.error(error);
+    throw error;
   }
 }
 
-async function updateBio({ bio, id }: UserUpdateData) {
+async function updateProfileBio({ bio, id }: UserUpdateData) {
   try {
     return await prisma.profile.update({
       where: { userId: id },
@@ -30,7 +31,8 @@ async function updateBio({ bio, id }: UserUpdateData) {
     });
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }
 
-export { updateBio, createProfile };
+export { updateProfileBio, createProfile };

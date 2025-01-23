@@ -4,7 +4,7 @@ import { createProfile } from "../models/profile";
 import { UserData } from "../types/types";
 import signToken from "../utils/signToken";
 
-async function userSignup({ username, password }: UserData) {
+async function signupService({ username, password }: UserData) {
   const user = await findUser({ username });
 
   if (user) {
@@ -18,7 +18,7 @@ async function userSignup({ username, password }: UserData) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await createUser({ username, password: hashedPassword });
     if (newUser) {
-      await createProfile({ id: newUser.id });
+      await createProfile({ userId: newUser.id });
     }
     if (!newUser) {
       return {
@@ -37,10 +37,10 @@ async function userSignup({ username, password }: UserData) {
   }
 }
 
-async function userGithubLogin(user: { id: string }) {
+async function githubLoginService(user: { id: string }) {
   try {
     const token = signToken({ userId: parseInt(user.id) });
-    await createProfile({ id: parseInt(user.id) });
+    await createProfile({ userId: parseInt(user.id) });
     return {
       token,
       user,
@@ -56,7 +56,7 @@ async function userGithubLogin(user: { id: string }) {
   }
 }
 
-async function userLogin({ username, password }: UserData) {
+async function loginService({ username, password }: UserData) {
   const user = await findUser({ username });
 
   if (!user) {
@@ -93,4 +93,4 @@ async function userLogin({ username, password }: UserData) {
   }
 }
 
-export { userSignup, userLogin, userGithubLogin };
+export { signupService, loginService, githubLoginService };

@@ -1,7 +1,11 @@
 import { Router } from "express";
 import { validateData } from "../middlewares/validationMiddleware";
 import { createPostSchema, updatePostSchema } from "../validation/schemas";
-import { createPost, updatePost } from "../controllers/postController";
+import {
+  createPost,
+  updatePost,
+  deletePost,
+} from "../controllers/postController";
 import passport from "passport";
 
 const postRouter = Router();
@@ -18,6 +22,12 @@ postRouter.patch(
   passport.authenticate("jwt", { session: false }),
   validateData(updatePostSchema),
   updatePost
+);
+
+postRouter.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  deletePost
 );
 
 export default postRouter;

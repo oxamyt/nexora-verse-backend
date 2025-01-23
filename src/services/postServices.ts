@@ -1,9 +1,14 @@
 import { EditPostParams } from "../types/types";
-import { fetchPost, updatePostRecord } from "../models/post";
+import { getPost, updatePost, deletePost } from "../models/post";
 
-async function editPost({ postId, title, body, userId }: EditPostParams) {
+async function updatePostService({
+  postId,
+  title,
+  body,
+  userId,
+}: EditPostParams) {
   try {
-    const post = await fetchPost({ id: postId });
+    const post = await getPost({ id: postId });
 
     if (!post) {
       return { error: "Post not found.", statusCode: 400 };
@@ -16,7 +21,7 @@ async function editPost({ postId, title, body, userId }: EditPostParams) {
       };
     }
 
-    const updatedPost = await updatePostRecord({ title, body, postId });
+    const updatedPost = await updatePost({ title, body, postId });
     return { updatedPost, statusCode: 200 };
   } catch (error) {
     console.error(error);
@@ -27,4 +32,36 @@ async function editPost({ postId, title, body, userId }: EditPostParams) {
   }
 }
 
-export { editPost };
+async function deletePostService({
+  userId,
+  postId,
+}: {
+  userId: number;
+  postId: number;
+}) {
+  try {
+    const post = await getPost({ id: postId });
+
+    if (!post) {
+      return { error: "Post not found.", statusCode: 400 };
+    }
+
+    if (post.userId !== userId) {
+      return {
+        error: "Unauthorized to delete this post.",
+        statusCode: 403,
+      };
+    }
+
+    await deletePost({ id: postId });
+    return { statusCode: 204 };
+  } catch (error) {
+    console.error(error);
+    return {
+      error: "Internal server error while deleting post",
+      statusCode: 500,
+    };
+  }
+}
+
+export { updatePostService, deletePostService };

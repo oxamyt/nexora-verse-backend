@@ -12,7 +12,7 @@ interface UserUpdateData {
 interface CreatePostData {
   title: string;
   body?: string;
-  id: number;
+  userId: number;
 }
 
 interface UpdatePostData {

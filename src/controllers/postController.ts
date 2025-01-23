@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { createNewPost, updatePostRecord } from "../models/post";
-import { editPost } from "../services/postServices";
+import { createNewPost } from "../models/post";
+import { updatePostService, deletePostService } from "../services/postServices";
 
 async function createPost(req: Request, res: Response) {
   const { title, body } = req.body;
@@ -11,11 +11,11 @@ async function createPost(req: Request, res: Response) {
       const newPost = await createNewPost({
         title,
         body,
-        id: parseInt(user.id),
+        userId: parseInt(user.id),
       });
       res.status(201).json({ newPost });
     } else {
-      res.status(400).json({ error: "No user data found." });
+      res.status(401).json({ error: "No user data found." });
     }
   } catch (error) {
     console.error(error);
@@ -32,20 +32,20 @@ async function updatePost(req: Request, res: Response) {
 
   try {
     if (!user) {
-      return res.status(400).json({ error: "No user data found." });
-    }
-
-    const result = await editPost({
-      postId: parseInt(postId),
-      title,
-      body,
-      userId: parseInt(user.id),
-    });
-
-    if (result.statusCode === 200) {
-      res.status(result.statusCode).json({ updatedPost: result.updatedPost });
+      res.status(401).json({ error: "No user data found." });
     } else {
-      res.status(result.statusCode).json({ error: result.error });
+      const result = await updatePostService({
+        postId: parseInt(postId),
+        title,
+        body,
+        userId: parseInt(user.id),
+      });
+
+      if (result.statusCode === 200) {
+        res.status(result.statusCode).json({ updatedPost: result.updatedPost });
+      } else {
+        res.status(result.statusCode).json({ error: result.error });
+      }
     }
   } catch (error) {
     console.error(error);
@@ -55,4 +55,27 @@ async function updatePost(req: Request, res: Response) {
   }
 }
 
-export { createPost, updatePost };
+async function deletePost(req: Request, res: Response) {
+  const user = req.user;
+  const postId = req.params.id;
+
+  try {
+    if (!user) {
+      res.status(401).json({ error: "No user data found." });
+    } else {
+      const result = await deletePostService({
+        userId: parseInt(user.id),
+        postId: parseInt(postId),
+      });
+
+      res.status(result.statusCode).send();
+    }
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Internal server error while deleting the post." });
+  }
+}
+
+export { createPost, updatePost, deletePost };

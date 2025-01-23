@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
-import { fetchUsers, fetchById, fetchByUsername } from "../models/user";
-import { patchUser } from "../services/userServices";
+import { fetchUsers, findUserById, fetchByUsername } from "../models/user";
+import { updateUserService } from "../services/userServices";
 
 async function getUsers(req: Request, res: Response) {
   try {
     const { id, username } = req.query;
 
     if (id) {
-      const user = await fetchById({ id: parseInt(id as string) });
+      const user = await findUserById({ id: parseInt(id as string) });
       res.status(200).json(user);
     } else if (username) {
       const user = await fetchByUsername({ username: username as string });
@@ -30,7 +30,7 @@ async function updateUser(req: Request, res: Response) {
     const user = req.user;
 
     if (user) {
-      const updatedUser = await patchUser({
+      const updatedUser = await updateUserService({
         username,
         bio,
         id: parseInt(user.id),

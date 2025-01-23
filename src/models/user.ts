@@ -3,6 +3,11 @@ import { UserData, UserUpdateData } from "../types/types";
 
 const prisma = new PrismaClient();
 
+const userSelectFields = {
+  username: true,
+  avatarUrl: true,
+};
+
 async function findUser({ username }: { username: string }) {
   try {
     return await prisma.user.findUnique({
@@ -18,29 +23,25 @@ async function findUser({ username }: { username: string }) {
 async function fetchUsers() {
   try {
     return await prisma.user.findMany({
-      select: {
-        username: true,
-        avatarUrl: true,
-      },
+      select: userSelectFields,
     });
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }
 
-async function fetchById({ id }: { id: number }) {
+async function findUserById({ id }: { id: number }) {
   try {
     return await prisma.user.findUnique({
       where: {
         id,
       },
-      select: {
-        username: true,
-        avatarUrl: true,
-      },
+      select: userSelectFields,
     });
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }
 
@@ -91,7 +92,7 @@ async function updateUsername({ username, id }: UserUpdateData) {
 export {
   findUser,
   fetchUsers,
-  fetchById,
+  findUserById,
   fetchByUsername,
   createUser,
   updateUsername,

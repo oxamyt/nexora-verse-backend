@@ -3,44 +3,60 @@ import { CreatePostData, UpdatePostData } from "../types/types";
 
 const prisma = new PrismaClient();
 
-async function createNewPost({ title, body, id }: CreatePostData) {
+async function createNewPost({ title, body, userId }: CreatePostData) {
   try {
     return await prisma.post.create({
       data: {
         title,
         body: body || null,
-        userId: id,
+        userId,
       },
     });
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }
 
-async function fetchPost({ id }: { id: number }) {
+async function getPost({ id }: { id: number }) {
   try {
     return await prisma.post.findUnique({
       where: { id },
     });
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }
 
-async function updatePostRecord({ title, body, postId }: UpdatePostData) {
+async function updatePost({ title, body, postId }: UpdatePostData) {
   try {
-    const updateData: { title?: string; body?: string } = {};
+    const postUpdateData: { title?: string; body?: string } = {};
 
-    if (title) updateData.title = title;
-    if (body !== undefined) updateData.body = body;
+    if (title) postUpdateData.title = title;
+    if (body !== undefined) postUpdateData.body = body;
 
     return await prisma.post.update({
       where: { id: postId },
-      data: updateData,
+      data: postUpdateData,
     });
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }
 
-export { createNewPost, updatePostRecord, fetchPost };
+async function deletePost({ id }: { id: number }) {
+  try {
+    return await prisma.post.delete({
+      where: {
+        id,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export { createNewPost, updatePost, getPost, deletePost };

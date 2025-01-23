@@ -1,9 +1,9 @@
 import { UserUpdateData } from "../types/types";
 import { fetchByUsername } from "../models/user";
 import { updateUsername } from "../models/user";
-import { updateBio } from "../models/profile";
+import { updateProfileBio } from "../models/profile";
 
-async function patchUser({ username, bio, id }: UserUpdateData) {
+async function updateUserService({ username, bio, id }: UserUpdateData) {
   try {
     let updatedUser = null;
     let updatedProfile = null;
@@ -22,7 +22,7 @@ async function patchUser({ username, bio, id }: UserUpdateData) {
     }
 
     if (bio) {
-      updatedProfile = await updateBio({ bio, id });
+      updatedProfile = await updateProfileBio({ bio, id });
     }
 
     return { updatedUser, updatedProfile, statusCode: 200 };
@@ -32,4 +32,4 @@ async function patchUser({ username, bio, id }: UserUpdateData) {
   }
 }
 
-export { patchUser };
+export { updateUserService };
