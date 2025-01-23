@@ -59,6 +59,30 @@ async function retrieveRecentPosts() {
   }
 }
 
+async function retrieveLikedPosts({ userId }: { userId: number }) {
+  try {
+    return await prisma.post.findMany({
+      where: {
+        likes: {
+          some: {
+            userId: userId,
+          },
+        },
+      },
+      include: {
+        _count: {
+          select: {
+            likes: true,
+          },
+        },
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 async function updatePost({ title, body, postId }: UpdatePostData) {
   try {
     const postUpdateData: { title?: string; body?: string } = {};
@@ -95,5 +119,6 @@ export {
   getPost,
   getUserPosts,
   retrieveRecentPosts,
+  retrieveLikedPosts,
   deletePost,
 };

@@ -7,6 +7,7 @@ import {
   deletePost,
   getPosts,
   getRecentPosts,
+  getLikedPosts,
 } from "../controllers/postController";
 import passport from "passport";
 
@@ -20,15 +21,21 @@ postRouter.post(
 );
 
 postRouter.get(
-  "/:id",
+  "/liked",
   passport.authenticate("jwt", { session: false }),
-  getPosts
+  getLikedPosts
 );
 
 postRouter.get(
   "/",
   passport.authenticate("jwt", { session: false }),
   getRecentPosts
+);
+
+postRouter.get(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  getPosts
 );
 
 postRouter.patch(

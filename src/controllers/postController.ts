@@ -3,6 +3,7 @@ import {
   createNewPost,
   getUserPosts,
   retrieveRecentPosts,
+  retrieveLikedPosts,
 } from "../models/post";
 import { updatePostService, deletePostService } from "../services/postServices";
 
@@ -60,6 +61,24 @@ async function getRecentPosts(req: Request, res: Response) {
   }
 }
 
+async function getLikedPosts(req: Request, res: Response) {
+  const user = req.user;
+
+  try {
+    if (!user) {
+      res.status(401).json("No user data found.");
+    } else {
+      const posts = await retrieveLikedPosts({ userId: parseInt(user.id) });
+      res.status(200).json(posts);
+    }
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Internal sever error during getting liked posts." });
+  }
+}
+
 async function updatePost(req: Request, res: Response) {
   const { title, body } = req.body;
   const postId = req.params.id;
@@ -113,4 +132,11 @@ async function deletePost(req: Request, res: Response) {
   }
 }
 
-export { createPost, updatePost, deletePost, getPosts, getRecentPosts };
+export {
+  createPost,
+  updatePost,
+  deletePost,
+  getPosts,
+  getRecentPosts,
+  getLikedPosts,
+};
