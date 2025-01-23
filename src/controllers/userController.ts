@@ -20,7 +20,7 @@ async function getUsers(req: Request, res: Response) {
     console.error(error);
     res
       .status(500)
-      .json({ message: "Internal server error during fetching users." });
+      .json({ error: "Internal server error during fetching users." });
   }
 }
 
@@ -36,15 +36,14 @@ async function updateUser(req: Request, res: Response) {
         id: parseInt(user.id),
       });
       if (updatedUser) {
-        res.status(updatedUser.success === true ? 200 : 400).json(updatedUser);
+        res.status(updatedUser.statusCode).json(updatedUser);
       }
     } else {
-      res.status(400).json({ success: false, error: "No user detected." });
+      res.status(400).json({ error: "No user detected." });
     }
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      success: false,
       error: "Internal server error during updating user",
     });
   }

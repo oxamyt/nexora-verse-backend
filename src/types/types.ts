@@ -21,6 +21,13 @@ interface UpdatePostData {
   postId: number;
 }
 
+interface EditPostParams {
+  postId: number;
+  title?: string;
+  body?: string;
+  userId: number;
+}
+
 declare global {
   namespace Express {
     interface User {
@@ -29,4 +36,10 @@ declare global {
   }
 }
 
-export { UserData, UserUpdateData, CreatePostData, UpdatePostData };
+export {
+  UserData,
+  UserUpdateData,
+  CreatePostData,
+  UpdatePostData,
+  EditPostParams,
+};

@@ -29,8 +29,6 @@ describe("Auth Router", async () => {
       })
       .expect("Content-Type", /json/)
       .expect(201);
-
-    expect(response.body.success).toBe(true);
   });
 
   it("should not signup a user when password do not match", async () => {
@@ -43,8 +41,6 @@ describe("Auth Router", async () => {
       })
       .expect("Content-Type", /json/)
       .expect(400);
-
-    expect(response.body.success).toBe(false);
   });
 
   it("should not signup a user when such username already exists", async () => {
@@ -64,7 +60,6 @@ describe("Auth Router", async () => {
       .expect("Content-Type", /json/)
       .expect(400);
 
-    expect(response.body.success).toBe(false);
     expect(response.body.error).toBe("Username already exists.");
   });
 

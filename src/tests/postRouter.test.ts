@@ -42,7 +42,7 @@ describe("Post Router", async () => {
 
     const token = loginResponse.body.token;
 
-    const postResponse = await request(app)
+    await request(app)
       .post("/posts")
       .set("Authorization", `Bearer ${token}`)
       .send({
@@ -50,8 +50,6 @@ describe("Post Router", async () => {
         body: "You need to fry it for 5 mins on every side!",
       })
       .expect(201);
-
-    expect(postResponse.body.success).toBe(true);
   });
 
   it("user should be able to create post without body", async () => {
@@ -71,15 +69,13 @@ describe("Post Router", async () => {
 
     const token = loginResponse.body.token;
 
-    const postResponse = await request(app)
+    await request(app)
       .post("/posts")
       .set("Authorization", `Bearer ${token}`)
       .send({
         title: "Best article ever",
       })
       .expect(201);
-
-    expect(postResponse.body.success).toBe(true);
   });
 
   it("user should be able to update post", async () => {
@@ -121,7 +117,6 @@ describe("Post Router", async () => {
       .send(updateData)
       .expect(200);
 
-    expect(updatePostResponse.body.success).toBe(true);
     expect(updatePostResponse.body.updatedPost.title).toBe(updateData.title);
     expect(updatePostResponse.body.updatedPost.body).toBe(updateData.body);
   });

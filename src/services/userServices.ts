@@ -12,7 +12,10 @@ async function patchUser({ username, bio, id }: UserUpdateData) {
       const existingUser = await fetchByUsername({ username });
 
       if (existingUser) {
-        return { success: false, error: "Such username already exists." };
+        return {
+          error: "Such username already exists.",
+          statusCode: 400,
+        };
       }
 
       updatedUser = await updateUsername({ username, id });
@@ -22,9 +25,10 @@ async function patchUser({ username, bio, id }: UserUpdateData) {
       updatedProfile = await updateBio({ bio, id });
     }
 
-    return { success: true, updatedUser, updatedProfile };
+    return { updatedUser, updatedProfile, statusCode: 200 };
   } catch (error) {
     console.error(error);
+    return { statusCode: 500 };
   }
 }
 

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { createNewPost, updatePostRecord } from "../models/post";
-import { fetchPost } from "../models/post";
+import { editPost } from "../services/postServices";
 
 async function createPost(req: Request, res: Response) {
   const { title, body } = req.body;
@@ -13,15 +13,15 @@ async function createPost(req: Request, res: Response) {
         body,
         id: parseInt(user.id),
       });
-      res.status(201).json({ newPost, success: true });
+      res.status(201).json({ newPost });
     } else {
-      res.status(400).json({ message: "No user data found." });
+      res.status(400).json({ error: "No user data found." });
     }
   } catch (error) {
     console.error(error);
     res
       .status(500)
-      .json({ message: "Internal server error during post creation." });
+      .json({ error: "Internal server error during post creation." });
   }
 }
 
@@ -31,36 +31,27 @@ async function updatePost(req: Request, res: Response) {
   const user = req.user;
 
   try {
-    if (user) {
-      const post = await fetchPost({ id: parseInt(postId) });
+    if (!user) {
+      return res.status(400).json({ error: "No user data found." });
+    }
 
-      if (!post) {
-        res.status(400).json({ success: false, error: "Post not found." });
-      } else {
-        if (post.userId === parseInt(user.id)) {
-          const updatedPost = await updatePostRecord({
-            title,
-            body,
-            postId: parseInt(postId),
-          });
-          res.status(200).json({ updatedPost, success: true });
-        } else {
-          res
-            .status(403)
-            .json({
-              success: false,
-              error: "Unauthorized to update this post.",
-            });
-        }
-      }
+    const result = await editPost({
+      postId: parseInt(postId),
+      title,
+      body,
+      userId: parseInt(user.id),
+    });
+
+    if (result.statusCode === 200) {
+      res.status(result.statusCode).json({ updatedPost: result.updatedPost });
     } else {
-      res.status(400).json({ message: "No user data found." });
+      res.status(result.statusCode).json({ error: result.error });
     }
   } catch (error) {
     console.error(error);
     res
       .status(500)
-      .json({ message: "Internal server error during post update." });
+      .json({ error: "Internal server error during post update." });
   }
 }
 

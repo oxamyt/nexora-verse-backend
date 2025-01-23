@@ -8,7 +8,10 @@ async function userSignup({ username, password }: UserData) {
   const user = await findUser({ username });
 
   if (user) {
-    return { success: false, error: "Username already exists." };
+    return {
+      error: "Username already exists.",
+      statusCode: 400,
+    };
   }
 
   try {
@@ -18,13 +21,19 @@ async function userSignup({ username, password }: UserData) {
       await createProfile({ id: newUser.id });
     }
     if (!newUser) {
-      return { success: false, error: "Error creating a user." };
+      return {
+        error: "Error creating a user.",
+        statusCode: 400,
+      };
     }
 
-    return { success: true };
+    return { statusCode: 201 };
   } catch (error) {
     console.error(error);
-    return { success: false, error: "Internal server error during signup." };
+    return {
+      error: "Internal server error during signup.",
+      statusCode: 500,
+    };
   }
 }
 
@@ -32,12 +41,17 @@ async function userGithubLogin(user: { id: string }) {
   try {
     const token = signToken({ userId: parseInt(user.id) });
     await createProfile({ id: parseInt(user.id) });
-    return { success: true, token, user, message: "Login successful." };
+    return {
+      token,
+      user,
+      message: "Login successful.",
+      statusCode: 200,
+    };
   } catch (error) {
     console.error();
     return {
-      success: false,
       error: "Internal server error during Github Authentication.",
+      statusCode: 500,
     };
   }
 }
@@ -46,7 +60,10 @@ async function userLogin({ username, password }: UserData) {
   const user = await findUser({ username });
 
   if (!user) {
-    return { success: false, error: "Invalid username or password." };
+    return {
+      error: "Invalid username or password.",
+      statusCode: 400,
+    };
   }
 
   try {
@@ -54,19 +71,25 @@ async function userLogin({ username, password }: UserData) {
       const isPasswordValid = await bcrypt.compare(password, user.password);
 
       if (!isPasswordValid) {
-        return { success: false, error: "Invalid username or password." };
+        return {
+          error: "Invalid username or password.",
+          statusCode: 400,
+        };
       }
     }
     const token = signToken({ userId: user.id });
     return {
-      success: true,
       token,
       userId: user.id,
       message: "Login successful.",
+      statusCode: 200,
     };
   } catch (error) {
     console.error(error);
-    return { success: false, error: "Internal server error during login." };
+    return {
+      error: "Internal server error during login.",
+      statusCode: 500,
+    };
   }
 }
 

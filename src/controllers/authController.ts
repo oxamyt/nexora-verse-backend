@@ -4,17 +4,16 @@ import {
   userGithubLogin,
 } from "../services/authServices";
 import { Request, Response } from "express";
-import signToken from "../utils/signToken";
 
 async function signup(req: Request, res: Response) {
   try {
     const { username, password } = req.body;
 
     const signupResponse = await userSignup({ username, password });
-    res.status(!signupResponse.success ? 400 : 201).json(signupResponse);
+    res.status(signupResponse.statusCode).json(signupResponse);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal server error during signup." });
+    res.status(500).json({ error: "Internal server error during signup." });
   }
 }
 
@@ -23,10 +22,10 @@ async function login(req: Request, res: Response) {
     const { username, password } = req.body;
 
     const loginResponse = await userLogin({ username, password });
-    res.status(!loginResponse.success ? 400 : 200).json(loginResponse);
+    res.status(loginResponse.statusCode).json(loginResponse);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal server error during login." });
+    res.status(500).json({ error: "Internal server error during login." });
   }
 }
 
@@ -36,15 +35,15 @@ async function githubLogin(req: Request, res: Response) {
   try {
     if (user) {
       const githubAuthResponse = await userGithubLogin(user);
-      res.status(200).json(githubAuthResponse);
+      res.status(githubAuthResponse.statusCode).json(githubAuthResponse);
     } else {
-      res.status(400).json({ success: false, error: "No user detected." });
+      res.status(400).json({ error: "No user detected." });
     }
   } catch (error) {
     console.error(error);
     res
       .status(500)
-      .json({ message: "Internal server error during github login." });
+      .json({ error: "Internal server error during github login." });
   }
 }
 

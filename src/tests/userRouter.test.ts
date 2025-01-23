@@ -125,7 +125,6 @@ describe("Auth Router", async () => {
       .send(updateData)
       .expect(200);
 
-    expect(updateUserResponse.body.success).toBe(true);
     expect(updateUserResponse.body.updatedUser.username).toBe(
       updateData.username
     );
@@ -155,12 +154,10 @@ describe("Auth Router", async () => {
 
     const token = loginResponse.body.token;
 
-    const response = await request(app)
+    await request(app)
       .patch("/users")
       .set("Authorization", `Bearer ${token}`)
       .send({ username: "peter", bio: "I'm just a peter." })
       .expect(400);
-
-    expect(response.body.success).toBe(false);
   });
 });
