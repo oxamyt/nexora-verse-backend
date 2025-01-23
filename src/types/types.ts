@@ -28,6 +28,11 @@ interface EditPostParams {
   userId: number;
 }
 
+interface PostLikeData {
+  postId: number;
+  userId: number;
+}
+
 declare global {
   namespace Express {
     interface User {
@@ -42,4 +47,5 @@ export {
   CreatePostData,
   UpdatePostData,
   EditPostParams,
+  PostLikeData,
 };
