@@ -29,6 +29,36 @@ async function getPost({ id }: { id: number }) {
   }
 }
 
+async function getUserPosts({ userId }: { userId: number }) {
+  try {
+    return await prisma.post.findMany({
+      where: {
+        userId,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+async function retrieveRecentPosts() {
+  try {
+    return await prisma.post.findMany({
+      take: 15,
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 async function updatePost({ title, body, postId }: UpdatePostData) {
   try {
     const postUpdateData: { title?: string; body?: string } = {};
@@ -59,4 +89,11 @@ async function deletePost({ id }: { id: number }) {
   }
 }
 
-export { createNewPost, updatePost, getPost, deletePost };
+export {
+  createNewPost,
+  updatePost,
+  getPost,
+  getUserPosts,
+  retrieveRecentPosts,
+  deletePost,
+};

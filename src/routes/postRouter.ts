@@ -5,6 +5,8 @@ import {
   createPost,
   updatePost,
   deletePost,
+  getPosts,
+  getRecentPosts,
 } from "../controllers/postController";
 import passport from "passport";
 
@@ -15,6 +17,18 @@ postRouter.post(
   passport.authenticate("jwt", { session: false }),
   validateData(createPostSchema),
   createPost
+);
+
+postRouter.get(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  getPosts
+);
+
+postRouter.get(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  getRecentPosts
 );
 
 postRouter.patch(

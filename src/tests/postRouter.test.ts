@@ -154,4 +154,114 @@ describe("Post Router", async () => {
       .set("Authorization", `Bearer ${token}`)
       .expect(204);
   });
+
+  it("user should be able to fetch posts by user id", async () => {
+    await request(app).post("/auth/signup").send({
+      username: "john",
+      password: "password123",
+      confirm: "password123",
+    });
+
+    const loginResponse = await request(app)
+      .post("/auth/login")
+      .send({
+        username: "john",
+        password: "password123",
+      })
+      .expect(200);
+
+    const { token, userId } = loginResponse.body;
+
+    const posts = [
+      {
+        title: "How to cook a steak",
+        body: "You need to fry it for 5 mins on every side!",
+      },
+      {
+        title: "How to cook pasta",
+        body: "You need to boil it for 10 mins!",
+      },
+      {
+        title: "How to squat with barbell",
+        body: "You need to squat slowly 5 times!",
+      },
+    ];
+
+    for (const post of posts) {
+      await request(app)
+        .post("/posts")
+        .set("Authorization", `Bearer ${token}`)
+        .send(post)
+        .expect("Content-Type", /json/)
+        .expect(201);
+    }
+
+    const getPostsResponse = await request(app)
+      .get(`/posts/${userId}`)
+      .set("Authorization", `Bearer ${token}`)
+      .expect(200);
+
+    expect(Array.isArray(getPostsResponse.body)).toBe(true);
+
+    for (const post of posts) {
+      expect(getPostsResponse.body).toEqual(
+        expect.arrayContaining([expect.objectContaining(post)])
+      );
+    }
+  });
+
+  it("user should be able to fetch all recent posts", async () => {
+    await request(app).post("/auth/signup").send({
+      username: "john",
+      password: "password123",
+      confirm: "password123",
+    });
+
+    const loginResponse = await request(app)
+      .post("/auth/login")
+      .send({
+        username: "john",
+        password: "password123",
+      })
+      .expect(200);
+
+    const { token } = loginResponse.body;
+
+    const posts = [
+      {
+        title: "How to cook a steak",
+        body: "You need to fry it for 5 mins on every side!",
+      },
+      {
+        title: "How to cook pasta",
+        body: "You need to boil it for 10 mins!",
+      },
+      {
+        title: "How to squat with barbell",
+        body: "You need to squat slowly 5 times!",
+      },
+    ];
+
+    for (const post of posts) {
+      await request(app)
+        .post("/posts")
+        .set("Authorization", `Bearer ${token}`)
+        .send(post)
+        .expect("Content-Type", /json/)
+        .expect(201);
+    }
+
+    const getPostsResponse = await request(app)
+      .get("/posts")
+      .set("Authorization", `Bearer ${token}`)
+      .expect(200);
+
+    expect(Array.isArray(getPostsResponse.body)).toBe(true);
+
+    for (const post of posts) {
+      expect(getPostsResponse.body).toEqual(
+        expect.arrayContaining([expect.objectContaining(post)])
+      );
+    }
+  });
 });

@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
-import { createNewPost } from "../models/post";
+import {
+  createNewPost,
+  getUserPosts,
+  retrieveRecentPosts,
+} from "../models/post";
 import { updatePostService, deletePostService } from "../services/postServices";
 
 async function createPost(req: Request, res: Response) {
@@ -22,6 +26,37 @@ async function createPost(req: Request, res: Response) {
     res
       .status(500)
       .json({ error: "Internal server error during post creation." });
+  }
+}
+
+async function getPosts(req: Request, res: Response) {
+  const userId = req.params.id;
+
+  try {
+    if (!userId) {
+      res.status(400).json({ error: "No user id found." });
+    } else {
+      const posts = await getUserPosts({ userId: parseInt(userId) });
+      res.status(200).json(posts);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Internal server error during getting posts by user id.",
+    });
+  }
+}
+
+async function getRecentPosts(req: Request, res: Response) {
+  try {
+    const posts = await retrieveRecentPosts();
+
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Internal server error during getting recent posts.",
+    });
   }
 }
 
@@ -78,4 +113,4 @@ async function deletePost(req: Request, res: Response) {
   }
 }
 
-export { createPost, updatePost, deletePost };
+export { createPost, updatePost, deletePost, getPosts, getRecentPosts };
