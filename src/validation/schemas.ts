@@ -93,14 +93,14 @@ const updatePostSchema = z
 
 export type updatePostSchema = z.infer<typeof createPostSchema>;
 
-const createCommentSchema = z.object({
+const CommentSchema = z.object({
   content: z
     .string()
     .min(1, { message: "Body must be at least 1 characters long." })
     .max(200, { message: "Body must not exceed 200 characters." }),
 });
 
-export type createCommentSchema = z.infer<typeof createCommentSchema>;
+export type CommentSchema = z.infer<typeof CommentSchema>;
 
 export {
   userSignupSchema,
@@ -108,5 +108,5 @@ export {
   updateUserDataSchema,
   createPostSchema,
   updatePostSchema,
-  createCommentSchema,
+  CommentSchema,
 };

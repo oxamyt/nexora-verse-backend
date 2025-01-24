@@ -123,6 +123,62 @@ describe("Post Router", async () => {
     expect(updatePostResponse.body.updatedPost.body).toBe(updateData.body);
   });
 
+  it("first user should not be able to update second user post", async () => {
+    await request(app).post("/auth/signup").send({
+      username: "john",
+      password: "password123",
+      confirm: "password123",
+    });
+
+    await request(app).post("/auth/signup").send({
+      username: "peter",
+      password: "password123",
+      confirm: "password123",
+    });
+
+    const firstLoginResponse = await request(app)
+      .post("/auth/login")
+      .send({
+        username: "john",
+        password: "password123",
+      })
+      .expect(200);
+
+    let token = firstLoginResponse.body.token;
+
+    const postResponse = await request(app)
+      .post("/posts")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        title: "How to cook a steak",
+        body: "You need to fry it for 5 mins on every side!",
+      })
+      .expect(201);
+
+    const postId = postResponse.body.newPost.id;
+
+    const updateData = {
+      title: "How to cook pasta",
+      body: "You need to boil it for 10 mins!",
+    };
+
+    const secondLoginResponse = await request(app)
+      .post("/auth/login")
+      .send({
+        username: "peter",
+        password: "password123",
+      })
+      .expect(200);
+
+    token = secondLoginResponse.body.token;
+
+    const updatePostResponse = await request(app)
+      .patch(`/posts/${postId}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send(updateData)
+      .expect(403);
+  });
+
   it("user should be able to delete post", async () => {
     await request(app).post("/auth/signup").send({
       username: "john",
@@ -155,6 +211,56 @@ describe("Post Router", async () => {
       .delete(`/posts/${postId}`)
       .set("Authorization", `Bearer ${token}`)
       .expect(204);
+  });
+
+  it("first user should not be able to delete second user post", async () => {
+    await request(app).post("/auth/signup").send({
+      username: "john",
+      password: "password123",
+      confirm: "password123",
+    });
+
+    await request(app).post("/auth/signup").send({
+      username: "peter",
+      password: "password123",
+      confirm: "password123",
+    });
+
+    const firstLoginResponse = await request(app)
+      .post("/auth/login")
+      .send({
+        username: "john",
+        password: "password123",
+      })
+      .expect(200);
+
+    let token = firstLoginResponse.body.token;
+
+    const postResponse = await request(app)
+      .post("/posts")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        title: "How to cook a steak",
+        body: "You need to fry it for 5 mins on every side!",
+      })
+      .expect(201);
+
+    const postId = postResponse.body.newPost.id;
+
+    const secondLoginResponse = await request(app)
+      .post("/auth/login")
+      .send({
+        username: "peter",
+        password: "password123",
+      })
+      .expect(200);
+
+    token = secondLoginResponse.body.token;
+
+    await request(app)
+      .delete(`/posts/${postId}`)
+      .set("Authorization", `Bearer ${token}`)
+      .expect(403);
   });
 
   it("user should be able to fetch posts by user id", async () => {

@@ -67,4 +67,116 @@ describe("Comment Router", async () => {
 
     expect(commentResponse.body).toMatchObject(data);
   });
+
+  it("user should be able to update comment for post", async () => {
+    await request(app).post("/auth/signup").send({
+      username: "john",
+      password: "password123",
+      confirm: "password123",
+    });
+
+    const loginResponse = await request(app)
+      .post("/auth/login")
+      .send({
+        username: "john",
+        password: "password123",
+      })
+      .expect(200);
+
+    const token = loginResponse.body.token;
+
+    const postResponse = await request(app)
+      .post("/posts")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        title: "How to cook a steak",
+        body: "You need to fry it for 5 mins on every side!",
+      })
+      .expect(201);
+
+    const postId = postResponse.body.newPost.id;
+
+    const data = { content: "Great tutorial!" };
+
+    const commentResponse = await request(app)
+      .post(`/comments/${postId}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send(data)
+      .expect(201);
+
+    const commentId = commentResponse.body.id;
+
+    const newData = { content: "I like this one!" };
+
+    const updateCommentResponse = await request(app)
+      .patch(`/comments/${commentId}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send(newData)
+      .expect(200);
+
+    expect(updateCommentResponse.body).toMatchObject(newData);
+  });
+
+  it("first user should not be able to update second user comment for post", async () => {
+    await request(app).post("/auth/signup").send({
+      username: "john",
+      password: "password123",
+      confirm: "password123",
+    });
+
+    await request(app).post("/auth/signup").send({
+      username: "peter",
+      password: "password123",
+      confirm: "password123",
+    });
+
+    const firstLoginResponse = await request(app)
+      .post("/auth/login")
+      .send({
+        username: "john",
+        password: "password123",
+      })
+      .expect(200);
+
+    let token = firstLoginResponse.body.token;
+
+    const postResponse = await request(app)
+      .post("/posts")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        title: "How to cook a steak",
+        body: "You need to fry it for 5 mins on every side!",
+      })
+      .expect(201);
+
+    const postId = postResponse.body.newPost.id;
+
+    const data = { content: "Great tutorial!" };
+
+    const commentResponse = await request(app)
+      .post(`/comments/${postId}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send(data)
+      .expect(201);
+
+    const commentId = commentResponse.body.id;
+
+    const secondLoginResponse = await request(app)
+      .post("/auth/login")
+      .send({
+        username: "peter",
+        password: "password123",
+      })
+      .expect(200);
+
+    token = secondLoginResponse.body.token;
+
+    const newData = { content: "I like this one!" };
+
+    await request(app)
+      .patch(`/comments/${commentId}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send(newData)
+      .expect(403);
+  });
 });

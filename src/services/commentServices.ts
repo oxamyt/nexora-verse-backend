@@ -1,6 +1,10 @@
 import { getPost } from "../models/post";
-import { CreateCommentData } from "../types/types";
-import { createNewComment } from "../models/comment";
+import { CreateCommentData, updateCommentData } from "../types/types";
+import {
+  createNewComment,
+  retrieveComment,
+  updateCommentRecord,
+} from "../models/comment";
 
 async function createCommentService({
   userId,
@@ -25,4 +29,37 @@ async function createCommentService({
   }
 }
 
-export { createCommentService };
+async function updateCommentService({
+  content,
+  commentId,
+  userId,
+}: updateCommentData) {
+  try {
+    const comment = await retrieveComment({ id: commentId });
+
+    if (!comment) {
+      return { error: "Comment not found.", statusCode: 400 };
+    }
+
+    if (comment.userId !== userId) {
+      return {
+        error: "Unauthorized to update this comment.",
+        statusCode: 403,
+      };
+    }
+
+    const updatedComment = await updateCommentRecord({
+      id: commentId,
+      content,
+    });
+    return { updatedComment, statusCode: 200 };
+  } catch (error) {
+    console.error(error);
+    return {
+      error: "Internal server error during post update.",
+      statusCode: 500,
+    };
+  }
+}
+
+export { createCommentService, updateCommentService };
