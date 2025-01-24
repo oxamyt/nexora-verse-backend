@@ -2,11 +2,12 @@ import request from "supertest";
 import express from "express";
 import authRouter from "../routes/authRouter";
 import userRouter from "../routes/userRouter";
+import likeRouter from "../routes/likeRouter";
+import commentRouter from "../routes/commentRouter";
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import { cleanupDatabase } from "../utils/cleanupDatabase";
 import passport from "../utils/passportConfig";
 import postRouter from "../routes/postRouter";
-import likeRouter from "../routes/likeRouter";
 
 const app = express();
 
@@ -16,9 +17,10 @@ app.use(express.json());
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/posts", postRouter);
+app.use("/comments", commentRouter);
 app.use("/likes", likeRouter);
 
-describe("Like Router", async () => {
+describe("Comment Router", async () => {
   beforeEach(async () => {
     await cleanupDatabase();
   });
@@ -27,7 +29,7 @@ describe("Like Router", async () => {
     await cleanupDatabase();
   });
 
-  it("user should be able to like post", async () => {
+  it("user should be able to create comment for post", async () => {
     await request(app).post("/auth/signup").send({
       username: "john",
       password: "password123",
@@ -55,9 +57,14 @@ describe("Like Router", async () => {
 
     const postId = postResponse.body.newPost.id;
 
-    await request(app)
-      .patch(`/likes/post/${postId}`)
+    const data = { content: "Great tutorial!" };
+
+    const commentResponse = await request(app)
+      .post(`/comments/${postId}`)
       .set("Authorization", `Bearer ${token}`)
-      .expect(204);
+      .send(data)
+      .expect(201);
+
+    expect(commentResponse.body).toMatchObject(data);
   });
 });

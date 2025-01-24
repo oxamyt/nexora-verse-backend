@@ -14,7 +14,7 @@ app.use(express.json());
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
 
-describe("Auth Router", async () => {
+describe("User Router", async () => {
   beforeEach(async () => {
     await cleanupDatabase();
   });

@@ -66,7 +66,7 @@ async function getLikedPosts(req: Request, res: Response) {
 
   try {
     if (!user) {
-      res.status(401).json("No user data found.");
+      res.status(401).json({ error: "Unauthorized: User not authenticated." });
     } else {
       const posts = await retrieveLikedPosts({ userId: parseInt(user.id) });
       res.status(200).json(posts);
@@ -115,7 +115,7 @@ async function deletePost(req: Request, res: Response) {
 
   try {
     if (!user) {
-      res.status(401).json({ error: "No user data found." });
+      res.status(401).json({ error: "Unauthorized: User not authenticated." });
     } else {
       const result = await deletePostService({
         userId: parseInt(user.id),

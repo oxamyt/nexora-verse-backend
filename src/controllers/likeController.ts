@@ -6,7 +6,7 @@ async function handlePostLike(req: Request, res: Response) {
   const user = req.user;
   try {
     if (!user) {
-      res.status(401).json({ error: "No user data found." });
+      res.status(401).json({ error: "Unauthorized: User not authenticated." });
     } else if (!postId) {
       res.status(400).json({ error: "Post id not found." });
     } else {
