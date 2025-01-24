@@ -55,4 +55,22 @@ async function updateCommentRecord({
   }
 }
 
-export { createNewComment, retrieveComment, updateCommentRecord };
+async function deleteComment({ id }: { id: number }) {
+  try {
+    return await prisma.comment.delete({
+      where: {
+        id,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export {
+  createNewComment,
+  retrieveComment,
+  updateCommentRecord,
+  deleteComment,
+};

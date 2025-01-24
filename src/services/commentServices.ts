@@ -4,6 +4,7 @@ import {
   createNewComment,
   retrieveComment,
   updateCommentRecord,
+  deleteComment,
 } from "../models/comment";
 
 async function createCommentService({
@@ -56,10 +57,42 @@ async function updateCommentService({
   } catch (error) {
     console.error(error);
     return {
-      error: "Internal server error during post update.",
+      error: "Internal server error during comment update.",
       statusCode: 500,
     };
   }
 }
 
-export { createCommentService, updateCommentService };
+async function deleteCommentService({
+  userId,
+  commentId,
+}: {
+  userId: number;
+  commentId: number;
+}) {
+  try {
+    const comment = await retrieveComment({ id: commentId });
+
+    if (!comment) {
+      return { error: "Comment not found.", statusCode: 400 };
+    }
+
+    if (comment.userId !== userId) {
+      return {
+        error: "Unauthorized to delete this comment.",
+        statusCode: 403,
+      };
+    }
+
+    await deleteComment({ id: commentId });
+    return { statusCode: 204 };
+  } catch (error) {
+    console.error(error);
+    return {
+      error: "Internal server error while deleting comment",
+      statusCode: 500,
+    };
+  }
+}
+
+export { createCommentService, updateCommentService, deleteCommentService };

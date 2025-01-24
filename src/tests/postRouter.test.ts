@@ -123,7 +123,7 @@ describe("Post Router", async () => {
     expect(updatePostResponse.body.updatedPost.body).toBe(updateData.body);
   });
 
-  it("first user should not be able to update second user post", async () => {
+  it("second user should not be able to update first user post", async () => {
     await request(app).post("/auth/signup").send({
       username: "john",
       password: "password123",
@@ -172,7 +172,7 @@ describe("Post Router", async () => {
 
     token = secondLoginResponse.body.token;
 
-    const updatePostResponse = await request(app)
+    await request(app)
       .patch(`/posts/${postId}`)
       .set("Authorization", `Bearer ${token}`)
       .send(updateData)
@@ -213,7 +213,7 @@ describe("Post Router", async () => {
       .expect(204);
   });
 
-  it("first user should not be able to delete second user post", async () => {
+  it("second user should not be able to delete first user post", async () => {
     await request(app).post("/auth/signup").send({
       username: "john",
       password: "password123",

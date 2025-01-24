@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import {
   createCommentService,
   updateCommentService,
+  deleteCommentService,
 } from "../services/commentServices";
 
 async function createComment(req: Request, res: Response) {
@@ -54,8 +55,31 @@ async function updateComment(req: Request, res: Response) {
     console.error(error);
     res
       .status(500)
-      .json({ error: "Internal server error during post update." });
+      .json({ error: "Internal server error during comment update." });
   }
 }
 
-export { createComment, updateComment };
+async function deleteComment(req: Request, res: Response) {
+  const user = req.user;
+  const commentId = req.params.id;
+
+  try {
+    if (!user) {
+      res.status(401).json({ error: "Unauthorized: User not authenticated." });
+    } else {
+      const result = await deleteCommentService({
+        userId: parseInt(user.id),
+        commentId: parseInt(commentId),
+      });
+
+      res.status(result.statusCode).send();
+    }
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Internal server error while deleting the comment." });
+  }
+}
+
+export { createComment, updateComment, deleteComment };
