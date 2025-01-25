@@ -50,6 +50,11 @@ interface updateCommentData {
   content: string;
 }
 
+interface FollowData {
+  followerId: number;
+  followedId: number;
+}
+
 declare global {
   namespace Express {
     interface User {
@@ -68,4 +73,5 @@ export {
   CreateCommentData,
   updateCommentData,
   CommentLikeData,
+  FollowData,
 };

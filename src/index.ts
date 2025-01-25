@@ -5,6 +5,7 @@ import authRouter from "./routes/authRouter";
 import userRouter from "./routes/userRouter";
 import postRouter from "./routes/postRouter";
 import likeRouter from "./routes/likeRouter";
+import followRouter from "./routes/followRouter";
 import session from "express-session";
 import "dotenv/config";
 
@@ -29,6 +30,7 @@ app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/posts", postRouter);
 app.use("/likes", likeRouter);
+app.use("/follows", likeRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
