@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { toggleFollowService } from "../services/followServices";
+import { retrieveFollowedUsers } from "../models/follow";
 
 async function handleFollow(req: Request, res: Response) {
+  const user = req.user;
+  const followedUserId = req.params.id;
   try {
-    const user = req.user;
-    const followedUserId = req.params.id;
-
     if (!user) {
       res.status(401).json({ error: "Unauthorized: User not authenticated." });
     } else {
@@ -21,9 +21,24 @@ async function handleFollow(req: Request, res: Response) {
       }
     }
   } catch (error) {
-    console.error("Error in handleFollow:", error);
+    console.error(error);
     res.status(500).json({ error: "Internal server error during following." });
   }
 }
 
-export { handleFollow };
+async function getFollowedUsers(req: Request, res: Response) {
+  const userId = parseInt(req.params.id);
+  try {
+    if (!userId) {
+      res.status(401).json({ error: "No user id found." });
+    } else {
+      const followedUsers = await retrieveFollowedUsers({ userId });
+      res.status(200).json(followedUsers);
+    }
+  } catch (error) {
+    console.error("");
+    res.status(500).json({ error: "Internal server error during following." });
+  }
+}
+
+export { handleFollow, getFollowedUsers };

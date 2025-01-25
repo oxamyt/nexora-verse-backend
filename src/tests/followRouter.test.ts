@@ -113,4 +113,92 @@ describe("Follow Router", async () => {
       .set("Authorization", `Bearer ${token}`)
       .expect(204);
   });
+
+  it("user should be able to fetch followed users", async () => {
+    const users = [
+      {
+        username: "john",
+        password: "password123",
+        confirm: "password123",
+      },
+      {
+        username: "peter",
+        password: "password123",
+        confirm: "password123",
+      },
+      {
+        username: "harry",
+        password: "password123",
+        confirm: "password123",
+      },
+      {
+        username: "kevin",
+        password: "password123",
+        confirm: "password123",
+      },
+      {
+        username: "michael",
+        password: "password123",
+        confirm: "password123",
+      },
+    ];
+
+    const userIds = [];
+
+    for (const user of users) {
+      await request(app).post("/auth/signup").send(user);
+
+      const userLoginResponse = await request(app)
+        .post("/auth/login")
+        .send({
+          username: user.username,
+          password: user.password,
+        })
+        .expect(200);
+
+      userIds.push(userLoginResponse.body.userId);
+    }
+
+    await request(app).post("/auth/signup").send({
+      username: "Mark",
+      password: "password123",
+      confirm: "password123",
+    });
+
+    const markLoginResponse = await request(app)
+      .post("/auth/login")
+      .send({
+        username: "Mark",
+        password: "password123",
+      })
+      .expect(200);
+
+    const token = markLoginResponse.body.token;
+    const userId = markLoginResponse.body.userId;
+
+    for (const userId of userIds) {
+      await request(app)
+        .patch(`/follows/${userId}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(204);
+    }
+
+    const followedUsersResponse = await request(app)
+      .get(`/follows/followed/${userId}`)
+      .set("Authorization", `Bearer ${token}`)
+      .expect(200);
+
+    expect(Array.isArray(followedUsersResponse.body)).toBe(true);
+    expect(followedUsersResponse.body).toHaveLength(users.length);
+    for (const user of users) {
+      expect(followedUsersResponse.body).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            username: user.username,
+            avatarUrl: expect.any(String),
+          }),
+        ])
+      );
+    }
+  });
 });
