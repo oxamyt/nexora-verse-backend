@@ -37,7 +37,7 @@ async function toggleFollow({ followerId, followedId }: FollowData) {
   }
 }
 
-async function retrieveFollowedUsers({ userId }: { userId: number }) {
+async function retrieveFollowed({ userId }: { userId: number }) {
   const follows = await prisma.follow.findMany({
     where: {
       followerId: userId,
@@ -56,4 +56,23 @@ async function retrieveFollowedUsers({ userId }: { userId: number }) {
   return follows.map((follow) => follow.following);
 }
 
-export { toggleFollow, retrieveFollowedUsers };
+async function retrieveFollowers({ userId }: { userId: number }) {
+  const followers = await prisma.follow.findMany({
+    where: {
+      followedId: userId,
+    },
+    select: {
+      follower: {
+        select: {
+          id: true,
+          username: true,
+          avatarUrl: true,
+        },
+      },
+    },
+  });
+
+  return followers.map((follow) => follow.follower);
+}
+
+export { toggleFollow, retrieveFollowed, retrieveFollowers };

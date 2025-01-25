@@ -174,7 +174,7 @@ describe("Follow Router", async () => {
       .expect(200);
 
     const token = markLoginResponse.body.token;
-    const userId = markLoginResponse.body.userId;
+    const markId = markLoginResponse.body.userId;
 
     for (const userId of userIds) {
       await request(app)
@@ -184,7 +184,7 @@ describe("Follow Router", async () => {
     }
 
     const followedUsersResponse = await request(app)
-      .get(`/follows/followed/${userId}`)
+      .get(`/follows/followed/${markId}`)
       .set("Authorization", `Bearer ${token}`)
       .expect(200);
 
@@ -192,6 +192,95 @@ describe("Follow Router", async () => {
     expect(followedUsersResponse.body).toHaveLength(users.length);
     for (const user of users) {
       expect(followedUsersResponse.body).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            username: user.username,
+            avatarUrl: expect.any(String),
+          }),
+        ])
+      );
+    }
+  });
+
+  it("user should be able to fetch followers", async () => {
+    const users = [
+      {
+        username: "john",
+        password: "password123",
+        confirm: "password123",
+      },
+      {
+        username: "peter",
+        password: "password123",
+        confirm: "password123",
+      },
+      {
+        username: "harry",
+        password: "password123",
+        confirm: "password123",
+      },
+      {
+        username: "kevin",
+        password: "password123",
+        confirm: "password123",
+      },
+      {
+        username: "michael",
+        password: "password123",
+        confirm: "password123",
+      },
+    ];
+
+    const userTokens = [];
+
+    for (const user of users) {
+      await request(app).post("/auth/signup").send(user);
+
+      const userLoginResponse = await request(app)
+        .post("/auth/login")
+        .send({
+          username: user.username,
+          password: user.password,
+        })
+        .expect(200);
+
+      userTokens.push(userLoginResponse.body.token);
+    }
+
+    await request(app).post("/auth/signup").send({
+      username: "Mark",
+      password: "password123",
+      confirm: "password123",
+    });
+
+    const markLoginResponse = await request(app)
+      .post("/auth/login")
+      .send({
+        username: "Mark",
+        password: "password123",
+      })
+      .expect(200);
+
+    const markToken = markLoginResponse.body.token;
+    const markUserId = markLoginResponse.body.userId;
+
+    for (const token of userTokens) {
+      await request(app)
+        .patch(`/follows/${markUserId}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(204);
+    }
+
+    const followersResponse = await request(app)
+      .get(`/follows/followers/${markUserId}`)
+      .set("Authorization", `Bearer ${markToken}`)
+      .expect(200);
+
+    expect(Array.isArray(followersResponse.body)).toBe(true);
+    expect(followersResponse.body).toHaveLength(users.length);
+
+    for (const user of users) {
+      expect(followersResponse.body).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             username: user.username,

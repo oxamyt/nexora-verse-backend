@@ -2,7 +2,8 @@ import { Router } from "express";
 import passport from "passport";
 import {
   handleFollow,
-  getFollowedUsers,
+  getFollowed,
+  getFollowers,
 } from "../controllers/followController";
 
 const followRouter = Router();
@@ -16,7 +17,13 @@ followRouter.patch(
 followRouter.get(
   "/followed/:id",
   passport.authenticate("jwt", { session: false }),
-  getFollowedUsers
+  getFollowed
+);
+
+followRouter.get(
+  "/followers/:id",
+  passport.authenticate("jwt", { session: false }),
+  getFollowers
 );
 
 export default followRouter;

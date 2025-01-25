@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { toggleFollowService } from "../services/followServices";
-import { retrieveFollowedUsers } from "../models/follow";
+import { retrieveFollowed, retrieveFollowers } from "../models/follow";
 
 async function handleFollow(req: Request, res: Response) {
   const user = req.user;
@@ -26,19 +26,34 @@ async function handleFollow(req: Request, res: Response) {
   }
 }
 
-async function getFollowedUsers(req: Request, res: Response) {
+async function getFollowed(req: Request, res: Response) {
   const userId = parseInt(req.params.id);
   try {
     if (!userId) {
       res.status(401).json({ error: "No user id found." });
     } else {
-      const followedUsers = await retrieveFollowedUsers({ userId });
+      const followedUsers = await retrieveFollowed({ userId });
       res.status(200).json(followedUsers);
     }
   } catch (error) {
-    console.error("");
+    console.error(error);
     res.status(500).json({ error: "Internal server error during following." });
   }
 }
 
-export { handleFollow, getFollowedUsers };
+async function getFollowers(req: Request, res: Response) {
+  const userId = parseInt(req.params.id);
+  try {
+    if (!userId) {
+      res.status(401).json({ error: "No user id found." });
+    } else {
+      const followers = await retrieveFollowers({ userId });
+      res.status(200).json(followers);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error during following." });
+  }
+}
+
+export { handleFollow, getFollowed, getFollowers };
