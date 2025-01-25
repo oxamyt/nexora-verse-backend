@@ -33,6 +33,11 @@ interface PostLikeData {
   userId: number;
 }
 
+interface CommentLikeData {
+  commentId: number;
+  userId: number;
+}
+
 interface CreateCommentData {
   postId: number;
   userId: number;
@@ -62,4 +67,5 @@ export {
   PostLikeData,
   CreateCommentData,
   updateCommentData,
+  CommentLikeData,
 };
