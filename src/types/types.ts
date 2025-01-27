@@ -55,6 +55,11 @@ interface FollowData {
   followedId: number;
 }
 
+interface RetrieveMessagesData {
+  userId: number;
+  targetId: number;
+}
+
 declare global {
   namespace Express {
     interface User {
@@ -74,4 +79,5 @@ export {
   updateCommentData,
   CommentLikeData,
   FollowData,
+  RetrieveMessagesData,
 };
