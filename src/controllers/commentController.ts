@@ -25,7 +25,7 @@ async function createComment(req: Request, res: Response) {
         .json(result.statusCode === 201 ? result.comment : result.error);
     }
   } catch (error) {
-    console.error(error);
+    console.error("Error during creating comment:", error);
     res
       .status(500)
       .json({ error: "Internal server error during comment creation." });
@@ -52,7 +52,7 @@ async function updateComment(req: Request, res: Response) {
         .json(result.statusCode === 200 ? result.updatedComment : result.error);
     }
   } catch (error) {
-    console.error(error);
+    console.error("Error during updating comment:", error);
     res
       .status(500)
       .json({ error: "Internal server error during comment update." });
@@ -75,7 +75,7 @@ async function deleteComment(req: Request, res: Response) {
       res.status(result.statusCode).send();
     }
   } catch (error) {
-    console.error(error);
+    console.error("Error during deleting comment:", error);
     res
       .status(500)
       .json({ error: "Internal server error while deleting the comment." });

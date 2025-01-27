@@ -17,7 +17,7 @@ async function getUsers(req: Request, res: Response) {
       res.status(200).json(users);
     }
   } catch (error) {
-    console.error(error);
+    console.error("Error during fetching users:", error);
     res
       .status(500)
       .json({ error: "Internal server error during fetching users." });
@@ -42,7 +42,7 @@ async function updateUser(req: Request, res: Response) {
       res.status(400).json({ error: "No user detected." });
     }
   } catch (error) {
-    console.error(error);
+    console.error("Error during updating user:", error);
     res.status(500).json({
       error: "Internal server error during updating user",
     });

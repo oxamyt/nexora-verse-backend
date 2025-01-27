@@ -24,7 +24,7 @@ async function updatePostService({
     const updatedPost = await updatePost({ title, body, postId });
     return { updatedPost, statusCode: 200 };
   } catch (error) {
-    console.error(error);
+    console.error("Error in updatePost service:", error);
     return {
       error: "Internal server error during post update.",
       statusCode: 500,
@@ -56,7 +56,7 @@ async function deletePostService({
     await deletePost({ id: postId });
     return { statusCode: 204 };
   } catch (error) {
-    console.error(error);
+    console.error("Error in deletePost service:", error);
     return {
       error: "Internal server error while deleting post",
       statusCode: 500,

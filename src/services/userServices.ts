@@ -27,7 +27,7 @@ async function updateUserService({ username, bio, id }: UserUpdateData) {
 
     return { updatedUser, updatedProfile, statusCode: 200 };
   } catch (error) {
-    console.error(error);
+    console.error("Error in updateUser service:", error);
     return { statusCode: 500 };
   }
 }

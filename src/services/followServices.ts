@@ -23,7 +23,7 @@ async function toggleFollowService({ followerId, followedId }: FollowData) {
     });
     return { statusCode: 204 };
   } catch (error) {
-    console.error("Error toggling follow:", error);
+    console.error("Error in toggleFollow service:", error);
     return { statusCode: 500, error: "Internal server error" };
   }
 }

@@ -23,7 +23,7 @@ async function createPost(req: Request, res: Response) {
       res.status(401).json({ error: "No user data found." });
     }
   } catch (error) {
-    console.error(error);
+    console.error("Error during creating post:", error);
     res
       .status(500)
       .json({ error: "Internal server error during post creation." });
@@ -41,7 +41,7 @@ async function getPosts(req: Request, res: Response) {
       res.status(200).json(posts);
     }
   } catch (error) {
-    console.error(error);
+    console.error("Error during fetching user`s post:", error);
     res.status(500).json({
       error: "Internal server error during getting posts by user id.",
     });
@@ -54,7 +54,7 @@ async function getRecentPosts(req: Request, res: Response) {
 
     res.status(200).json(posts);
   } catch (error) {
-    console.error(error);
+    console.error("Error during fetching recent posts:", error);
     res.status(500).json({
       error: "Internal server error during getting recent posts.",
     });
@@ -72,7 +72,7 @@ async function getLikedPosts(req: Request, res: Response) {
       res.status(200).json(posts);
     }
   } catch (error) {
-    console.error(error);
+    console.error("Error during fetching liked posts:", error);
     res
       .status(500)
       .json({ error: "Internal sever error during getting liked posts." });
@@ -102,7 +102,7 @@ async function updatePost(req: Request, res: Response) {
       }
     }
   } catch (error) {
-    console.error(error);
+    console.error("Error during updating post:", error);
     res
       .status(500)
       .json({ error: "Internal server error during post update." });
@@ -125,7 +125,7 @@ async function deletePost(req: Request, res: Response) {
       res.status(result.statusCode).send();
     }
   } catch (error) {
-    console.error(error);
+    console.error("Error during deleting post:", error);
     res
       .status(500)
       .json({ error: "Internal server error while deleting the post." });

@@ -17,7 +17,7 @@ async function handlePostLike(req: Request, res: Response) {
       res.status(204).send();
     }
   } catch (error) {
-    console.error(error);
+    console.error("Error during handling post like:", error);
     res
       .status(500)
       .json({ error: "Internal server error during like handling." });
@@ -40,7 +40,7 @@ async function handleCommentLike(req: Request, res: Response) {
       res.status(204).send();
     }
   } catch (error) {
-    console.error(error);
+    console.error("Error during handling comment like:", error);
     res
       .status(500)
       .json({ error: "Internal server error during like handling." });

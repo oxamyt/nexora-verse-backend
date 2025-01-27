@@ -29,7 +29,7 @@ async function signupService({ username, password }: UserData) {
 
     return { statusCode: 201 };
   } catch (error) {
-    console.error(error);
+    console.error("Error in signup service:", error);
     return {
       error: "Internal server error during signup.",
       statusCode: 500,
@@ -48,7 +48,7 @@ async function githubLoginService(user: { id: string }) {
       statusCode: 200,
     };
   } catch (error) {
-    console.error();
+    console.error("Error in githubLogin service:", error);
     return {
       error: "Internal server error during Github Authentication.",
       statusCode: 500,
@@ -85,7 +85,7 @@ async function loginService({ username, password }: UserData) {
       statusCode: 200,
     };
   } catch (error) {
-    console.error(error);
+    console.error("Error in login service:", error);
     return {
       error: "Internal server error during login.",
       statusCode: 500,

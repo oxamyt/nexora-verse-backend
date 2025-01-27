@@ -22,7 +22,7 @@ async function createCommentService({
     const comment = await createNewComment({ userId, postId, content });
     return { comment, statusCode: 201 };
   } catch (error) {
-    console.error();
+    console.error("Error in createComment service:", error);
     return {
       error: "Internal server error during comment creation.",
       statusCode: 500,
@@ -55,7 +55,7 @@ async function updateCommentService({
     });
     return { updatedComment, statusCode: 200 };
   } catch (error) {
-    console.error(error);
+    console.error("Error in updateComment service:", error);
     return {
       error: "Internal server error during comment update.",
       statusCode: 500,
@@ -87,7 +87,7 @@ async function deleteCommentService({
     await deleteComment({ id: commentId });
     return { statusCode: 204 };
   } catch (error) {
-    console.error(error);
+    console.error("Error in deleteComment service:", error);
     return {
       error: "Internal server error while deleting comment",
       statusCode: 500,

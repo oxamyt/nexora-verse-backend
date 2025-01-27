@@ -21,7 +21,7 @@ async function handleFollow(req: Request, res: Response) {
       }
     }
   } catch (error) {
-    console.error(error);
+    console.error("Error during handling follow:", error);
     res.status(500).json({ error: "Internal server error during following." });
   }
 }
@@ -36,7 +36,7 @@ async function getFollowed(req: Request, res: Response) {
       res.status(200).json(followedUsers);
     }
   } catch (error) {
-    console.error(error);
+    console.error("Error during fetching followed users:", error);
     res.status(500).json({ error: "Internal server error during following." });
   }
 }
@@ -51,7 +51,7 @@ async function getFollowers(req: Request, res: Response) {
       res.status(200).json(followers);
     }
   } catch (error) {
-    console.error(error);
+    console.error("Error during fetching followers:", error);
     res.status(500).json({ error: "Internal server error during following." });
   }
 }
