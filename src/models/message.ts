@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { RetrieveMessagesData } from "../types/types";
+import { RetrieveMessagesData, MessageData } from "../types/types";
 
 const prisma = new PrismaClient();
 
@@ -22,4 +22,19 @@ async function retrieveMessages({ userId, targetId }: RetrieveMessagesData) {
   }
 }
 
-export { retrieveMessages };
+async function sendMessage({ body, senderId, receiverId }: MessageData) {
+  try {
+    return await prisma.message.create({
+      data: {
+        body,
+        senderId,
+        receiverId,
+      },
+    });
+  } catch (error) {
+    console.error("Error saving message:", error);
+    throw error;
+  }
+}
+
+export { retrieveMessages, sendMessage };

@@ -30,7 +30,7 @@ app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/posts", postRouter);
 app.use("/likes", likeRouter);
-app.use("/follows", likeRouter);
+app.use("/follows", followRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

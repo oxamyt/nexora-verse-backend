@@ -6,6 +6,7 @@ const prisma = new PrismaClient();
 const userSelectFields = {
   username: true,
   avatarUrl: true,
+  id: true,
 };
 
 async function findUser({ username }: { username: string }) {

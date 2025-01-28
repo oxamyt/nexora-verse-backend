@@ -102,6 +102,17 @@ const CommentSchema = z.object({
 
 export type CommentSchema = z.infer<typeof CommentSchema>;
 
+const messageSchema = z.object({
+  body: z.string().min(1, "Message body is required"),
+  senderId: z.number().int().positive("Sender ID must be a positive integer"),
+  receiverId: z
+    .number()
+    .int()
+    .positive("Receiver ID must be a positive integer"),
+});
+
+export type messageSchema = z.infer<typeof messageSchema>;
+
 export {
   userSignupSchema,
   userLoginSchema,
@@ -109,4 +120,5 @@ export {
   createPostSchema,
   updatePostSchema,
   CommentSchema,
+  messageSchema,
 };

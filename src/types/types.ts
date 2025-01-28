@@ -60,10 +60,19 @@ interface RetrieveMessagesData {
   targetId: number;
 }
 
+interface MessageData {
+  body: string;
+  senderId: number;
+  receiverId: number;
+}
+
 declare global {
   namespace Express {
     interface User {
       id: string;
+    }
+    interface Request {
+      _query: Record<string, string>;
     }
   }
 }
@@ -80,4 +89,5 @@ export {
   CommentLikeData,
   FollowData,
   RetrieveMessagesData,
+  MessageData,
 };
