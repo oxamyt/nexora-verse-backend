@@ -77,6 +77,11 @@ interface UpdateMessageModel {
   id: number;
 }
 
+interface DeleteMessageData {
+  messageId: number;
+  senderId: number;
+}
+
 declare global {
   namespace Express {
     interface User {
@@ -103,4 +108,5 @@ export {
   MessageData,
   UpdateMessageData,
   UpdateMessageModel,
+  DeleteMessageData,
 };

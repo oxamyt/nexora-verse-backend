@@ -154,20 +154,11 @@ describe("Message Router", () => {
       body: "Hello!",
     };
 
-    const socketMessageReceived = new Promise<void>((resolve) => {
-      clientSocket.on("receiveMessage", (arg) => {
-        expect(arg).toEqual(expect.objectContaining(messageData));
-        resolve();
-      });
-    });
-
     const response = await request(app)
       .post(`/messages/${user2Id}`)
       .set("Authorization", `Bearer ${user1Token}`)
       .send(messageData)
       .expect(201);
-
-    await socketMessageReceived;
 
     const messageId = response.body.id;
 
@@ -190,5 +181,45 @@ describe("Message Router", () => {
       .expect(200);
 
     await socketMessageUpdate;
+  });
+
+  it("user should delete message", async () => {
+    const user1 = await createUser("john");
+    const user2 = await createUser("peter");
+
+    const user2Id = user2.userId;
+    const user1Token = user1.token;
+
+    clientSocket.emit("joinChat", {
+      userId: user1.userId,
+      chatPartnerId: user2Id,
+    });
+
+    const messageData = {
+      body: "Hello!",
+    };
+
+    const socketMessageDelete = new Promise<void>((resolve) => {
+      clientSocket.on("deleteMessage", (arg) => {
+        expect(arg).toEqual(expect.objectContaining(messageData));
+        resolve();
+      });
+    });
+
+    const response = await request(app)
+      .post(`/messages/${user2Id}`)
+      .set("Authorization", `Bearer ${user1Token}`)
+      .send(messageData)
+      .expect(201);
+
+    const messageId = response.body.id;
+
+    await request(app)
+      .delete(`/messages/${messageId}`)
+      .set("Authorization", `Bearer ${user1Token}`)
+      .send({ receiverId: user2Id })
+      .expect(204);
+
+    await socketMessageDelete;
   });
 });

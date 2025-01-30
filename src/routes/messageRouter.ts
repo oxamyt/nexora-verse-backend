@@ -4,6 +4,7 @@ import {
   getMessages,
   sendMessage,
   updateMessage,
+  deleteMessage,
 } from "../controllers/messageController";
 import { validateData } from "../middlewares/validationMiddleware";
 import { messageSchema } from "../validation/schemas";
@@ -30,6 +31,12 @@ export default function messageRouter(io: Server) {
     passport.authenticate("jwt", { session: false }),
     validateData(messageSchema),
     (req, res) => updateMessage(io, req, res)
+  );
+
+  messageRouter.delete(
+    "/:id",
+    passport.authenticate("jwt", { session: false }),
+    (req, res) => deleteMessage(io, req, res)
   );
 
   return messageRouter;

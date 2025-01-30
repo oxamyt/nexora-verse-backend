@@ -3,6 +3,7 @@ import { retrieveMessages } from "../models/message";
 import {
   sendMessageService,
   updateMessageService,
+  deleteMessageService,
 } from "../services/messageServices";
 import { Server } from "socket.io";
 
@@ -49,7 +50,7 @@ async function sendMessage(io: Server, req: Request, res: Response) {
         const newMessage = result.newMessage;
         io.to(roomName).emit("receiveMessage", newMessage);
 
-        res.status(201).json(newMessage);
+        res.status(result.statusCode).json(newMessage);
       } else {
         res.status(result.statusCode).json({ error: result.error });
       }
@@ -93,9 +94,47 @@ async function updateMessage(io: Server, req: Request, res: Response) {
       }
     }
   } catch (error) {
-    console.error("Error during message sending:", error);
-    res.status(500).json("Internal server error during sending message.");
+    console.error("Error during message updating:", error);
+    res.status(500).json("Internal server error during updating message.");
   }
 }
 
-export { getMessages, sendMessage, updateMessage };
+async function deleteMessage(io: Server, req: Request, res: Response) {
+  const user = req.user;
+  const { receiverId } = req.body;
+  const messageId = parseInt(req.params.id);
+
+  if (isNaN(messageId)) {
+    res.status(400).json({ error: "Invalid messageId ID." });
+  } else if (isNaN(receiverId)) {
+    res.status(400).json({ error: "Invalid receiver ID." });
+  }
+  try {
+    if (!user) {
+      res.status(401).json({ error: "Unauthorized: User not authenticated." });
+    } else {
+      const senderId = parseInt(user.id);
+
+      const result = await deleteMessageService({
+        messageId,
+        senderId,
+      });
+
+      if (result.statusCode === 204) {
+        const roomName = [senderId, receiverId].sort().join("-");
+
+        const newMessage = result.deletedMessage;
+        io.to(roomName).emit("deleteMessage", newMessage);
+
+        res.status(result.statusCode).json(newMessage);
+      } else {
+        res.status(result.statusCode).json({ error: result.error });
+      }
+    }
+  } catch (error) {
+    console.error("Error during message deleting:", error);
+    res.status(500).json("Internal server error during deleting message.");
+  }
+}
+
+export { getMessages, sendMessage, updateMessage, deleteMessage };

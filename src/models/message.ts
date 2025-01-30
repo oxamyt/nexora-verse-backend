@@ -69,4 +69,21 @@ async function updateMessage({ id, body }: UpdateMessageModel) {
   }
 }
 
-export { retrieveMessages, createMessage, findMessage, updateMessage };
+async function deleteMessage({ id }: { id: number }) {
+  try {
+    return await prisma.message.delete({
+      where: { id },
+    });
+  } catch (error) {
+    console.error("Error deleting message:", error);
+    throw error;
+  }
+}
+
+export {
+  retrieveMessages,
+  createMessage,
+  findMessage,
+  updateMessage,
+  deleteMessage,
+};

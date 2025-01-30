@@ -1,6 +1,15 @@
-import { MessageData, UpdateMessageData } from "../types/types";
+import {
+  MessageData,
+  UpdateMessageData,
+  DeleteMessageData,
+} from "../types/types";
 import { findUserById } from "../models/user";
-import { createMessage, findMessage, updateMessage } from "../models/message";
+import {
+  createMessage,
+  findMessage,
+  updateMessage,
+  deleteMessage,
+} from "../models/message";
 
 async function sendMessageService({ body, senderId, receiverId }: MessageData) {
   try {
@@ -53,4 +62,33 @@ async function updateMessageService({
   }
 }
 
-export { sendMessageService, updateMessageService };
+async function deleteMessageService({
+  senderId,
+  messageId,
+}: DeleteMessageData) {
+  try {
+    const message = await findMessage({ id: messageId });
+
+    if (!message) {
+      return { statusCode: 400, error: "Message not found" };
+    }
+
+    if (message.senderId !== senderId) {
+      return {
+        statusCode: 403,
+        error: "You don't have access to edit this message.",
+      };
+    }
+
+    const deletedMessage = await deleteMessage({ id: messageId });
+    return { statusCode: 204, deletedMessage };
+  } catch (error) {
+    console.error("Error during sendMessageService:", error);
+    return {
+      error: "Internal server error sending message.",
+      statusCode: 500,
+    };
+  }
+}
+
+export { sendMessageService, updateMessageService, deleteMessageService };
