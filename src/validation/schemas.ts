@@ -103,12 +103,10 @@ const CommentSchema = z.object({
 export type CommentSchema = z.infer<typeof CommentSchema>;
 
 const messageSchema = z.object({
-  body: z.string().min(1, "Message body is required"),
-  senderId: z.number().int().positive("Sender ID must be a positive integer"),
-  receiverId: z
-    .number()
-    .int()
-    .positive("Receiver ID must be a positive integer"),
+  body: z
+    .string()
+    .min(1, "Message body is required")
+    .max(500, "Message body must not exceed 500 characters."),
 });
 
 export type messageSchema = z.infer<typeof messageSchema>;

@@ -1,5 +1,5 @@
 import { getPost } from "../models/post";
-import { CreateCommentData, updateCommentData } from "../types/types";
+import { CreateCommentData, UpdateCommentData } from "../types/types";
 import {
   createNewComment,
   retrieveComment,
@@ -34,7 +34,7 @@ async function updateCommentService({
   content,
   commentId,
   userId,
-}: updateCommentData) {
+}: UpdateCommentData) {
   try {
     const comment = await retrieveComment({ id: commentId });
 

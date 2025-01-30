@@ -21,17 +21,16 @@ describe("Message Router", () => {
   let io: Server, serverSocket: ServerSocket, clientSocket: ClientSocket;
   let app: express.Express;
 
+  app = express();
+  const httpServer = createServer(app);
+  io = new Server(httpServer);
+  app.use(passport.initialize());
+  app.use(express.json());
+  app.use("/auth", authRouter);
+  app.use("/messages", messageRouter(io));
+  setupSocketHandlers(io);
   beforeAll(() => {
-    app = express();
-    app.use(passport.initialize());
-    app.use(express.json());
-    app.use("/auth", authRouter);
-    app.use("/messages", messageRouter);
-
     return new Promise<void>((resolve) => {
-      const httpServer = createServer(app);
-      io = new Server(httpServer);
-      setupSocketHandlers(io);
       httpServer.listen(() => {
         const port = (httpServer.address() as AddressInfo).port;
         clientSocket = ioc(`http://localhost:${port}`);
@@ -89,24 +88,31 @@ describe("Message Router", () => {
     const user2 = await createUser("peter");
 
     const user2Id = user2.userId;
+    const user1Token = user1.token;
 
     clientSocket.emit("joinChat", {
       userId: user1.userId,
       chatPartnerId: user2Id,
     });
 
-    await waitFor(clientSocket, "joinChat");
-
     const messageData = {
-      senderId: user1.userId,
-      receiverId: user2Id,
       body: "Hello!",
     };
 
-    clientSocket.emit("sendMessage", messageData);
-    const receivedMessage = await waitFor(clientSocket, "receiveMessage");
+    const socketEventReceived = new Promise<void>((resolve) => {
+      clientSocket.on("receiveMessage", (arg) => {
+        expect(arg).toEqual(expect.objectContaining(messageData));
+        resolve();
+      });
+    });
 
-    expect(receivedMessage).toEqual(expect.objectContaining(messageData));
+    await request(app)
+      .post(`/messages/${user2Id}`)
+      .set("Authorization", `Bearer ${user1Token}`)
+      .send(messageData)
+      .expect(201);
+
+    await socketEventReceived;
   });
 
   it("should reject empty message", async () => {
@@ -114,29 +120,75 @@ describe("Message Router", () => {
     const user2 = await createUser("peter");
 
     const user2Id = user2.userId;
+    const user1Token = user1.token;
 
     clientSocket.emit("joinChat", {
       userId: user1.userId,
       chatPartnerId: user2Id,
     });
 
-    await waitFor(clientSocket, "joinChat");
-
     const messageData = {
-      senderId: user1.userId,
-      receiverId: user2Id,
       body: "",
     };
 
-    const response = await new Promise((resolve) => {
-      clientSocket.emit("sendMessage", messageData, (response: any) => {
-        resolve(response);
+    await request(app)
+      .post(`/messages/${user2Id}`)
+      .set("Authorization", `Bearer ${user1Token}`)
+      .send(messageData)
+      .expect(400);
+  });
+
+  it("user should update and retrieve message", async () => {
+    const user1 = await createUser("john");
+    const user2 = await createUser("peter");
+
+    const user2Id = user2.userId;
+    const user1Token = user1.token;
+
+    clientSocket.emit("joinChat", {
+      userId: user1.userId,
+      chatPartnerId: user2Id,
+    });
+
+    const messageData = {
+      body: "Hello!",
+    };
+
+    const socketMessageReceived = new Promise<void>((resolve) => {
+      clientSocket.on("receiveMessage", (arg) => {
+        expect(arg).toEqual(expect.objectContaining(messageData));
+        resolve();
       });
     });
 
-    expect(response).toEqual({
-      status: "error",
-      message: "Message body is required",
+    const response = await request(app)
+      .post(`/messages/${user2Id}`)
+      .set("Authorization", `Bearer ${user1Token}`)
+      .send(messageData)
+      .expect(201);
+
+    await socketMessageReceived;
+
+    const messageId = response.body.id;
+
+    const newMessageData = {
+      body: "Hello there!",
+      receiverId: user2Id,
+    };
+
+    const socketMessageUpdate = new Promise<void>((resolve) => {
+      clientSocket.on("updateMessage", (arg) => {
+        expect(arg).toEqual(expect.objectContaining(newMessageData));
+        resolve();
+      });
     });
+
+    await request(app)
+      .patch(`/messages/${messageId}`)
+      .set("Authorization", `Bearer ${user1Token}`)
+      .send(newMessageData)
+      .expect(200);
+
+    await socketMessageUpdate;
   });
 });

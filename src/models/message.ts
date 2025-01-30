@@ -1,5 +1,9 @@
 import { PrismaClient } from "@prisma/client";
-import { RetrieveMessagesData, MessageData } from "../types/types";
+import {
+  RetrieveMessagesData,
+  MessageData,
+  UpdateMessageModel,
+} from "../types/types";
 
 const prisma = new PrismaClient();
 
@@ -22,7 +26,7 @@ async function retrieveMessages({ userId, targetId }: RetrieveMessagesData) {
   }
 }
 
-async function sendMessage({ body, senderId, receiverId }: MessageData) {
+async function createMessage({ body, senderId, receiverId }: MessageData) {
   try {
     return await prisma.message.create({
       data: {
@@ -37,4 +41,32 @@ async function sendMessage({ body, senderId, receiverId }: MessageData) {
   }
 }
 
-export { retrieveMessages, sendMessage };
+async function findMessage({ id }: { id: number }) {
+  try {
+    return await prisma.message.findUnique({
+      where: {
+        id,
+      },
+    });
+  } catch (error) {
+    console.error("Error getting message:", error);
+    throw error;
+  }
+}
+
+async function updateMessage({ id, body }: UpdateMessageModel) {
+  try {
+    return await prisma.message.update({
+      where: { id },
+      data: {
+        id,
+        body,
+      },
+    });
+  } catch (error) {
+    console.error("Error updating message:", error);
+    throw error;
+  }
+}
+
+export { retrieveMessages, createMessage, findMessage, updateMessage };

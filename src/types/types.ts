@@ -44,7 +44,7 @@ interface CreateCommentData {
   content: string;
 }
 
-interface updateCommentData {
+interface UpdateCommentData {
   commentId: number;
   userId: number;
   content: string;
@@ -66,6 +66,17 @@ interface MessageData {
   receiverId: number;
 }
 
+interface UpdateMessageData {
+  body: string;
+  senderId: number;
+  messageId: number;
+}
+
+interface UpdateMessageModel {
+  body: string;
+  id: number;
+}
+
 declare global {
   namespace Express {
     interface User {
@@ -85,9 +96,11 @@ export {
   EditPostParams,
   PostLikeData,
   CreateCommentData,
-  updateCommentData,
+  UpdateCommentData,
   CommentLikeData,
   FollowData,
   RetrieveMessagesData,
   MessageData,
+  UpdateMessageData,
+  UpdateMessageModel,
 };
