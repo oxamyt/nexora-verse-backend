@@ -12,32 +12,17 @@ import { Server } from "socket.io";
 
 export default function messageRouter(io: Server) {
   const messageRouter = Router();
+  const auth = passport.authenticate("jwt", { session: false });
 
-  messageRouter.get(
-    "/:id",
-    passport.authenticate("jwt", { session: false }),
-    getMessages
-  );
-
-  messageRouter.post(
-    "/:id",
-    passport.authenticate("jwt", { session: false }),
-    validateData(messageSchema),
-    (req, res) => sendMessage(io, req, res)
-  );
-
-  messageRouter.patch(
-    "/:id",
-    passport.authenticate("jwt", { session: false }),
-    validateData(messageSchema),
-    (req, res) => updateMessage(io, req, res)
-  );
-
-  messageRouter.delete(
-    "/:id",
-    passport.authenticate("jwt", { session: false }),
-    (req, res) => deleteMessage(io, req, res)
-  );
+  messageRouter
+    .get("/:id", auth, getMessages)
+    .post("/:id", auth, validateData(messageSchema), (req, res) =>
+      sendMessage(io, req, res)
+    )
+    .patch("/:id", auth, validateData(messageSchema), (req, res) =>
+      updateMessage(io, req, res)
+    )
+    .delete("/:id", auth, (req, res) => deleteMessage(io, req, res));
 
   return messageRouter;
 }

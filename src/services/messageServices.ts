@@ -47,16 +47,16 @@ async function updateMessageService({
     if (message.senderId !== senderId) {
       return {
         statusCode: 403,
-        error: "You don't have access to edit this message.",
+        error: "You don't have access to update this message.",
       };
     }
 
     const updatedMessage = await updateMessage({ body, id: messageId });
     return { statusCode: 200, updatedMessage };
   } catch (error) {
-    console.error("Error during sendMessageService:", error);
+    console.error("Error during updateMessageService:", error);
     return {
-      error: "Internal server error sending message.",
+      error: "Internal server error updating message.",
       statusCode: 500,
     };
   }
@@ -76,16 +76,16 @@ async function deleteMessageService({
     if (message.senderId !== senderId) {
       return {
         statusCode: 403,
-        error: "You don't have access to edit this message.",
+        error: "You don't have access to delete this message.",
       };
     }
 
     const deletedMessage = await deleteMessage({ id: messageId });
     return { statusCode: 204, deletedMessage };
   } catch (error) {
-    console.error("Error during sendMessageService:", error);
+    console.error("Error during deleteMessageService:", error);
     return {
-      error: "Internal server error sending message.",
+      error: "Internal server error deleting message.",
       statusCode: 500,
     };
   }

@@ -38,7 +38,16 @@ async function findUserById({ id }: { id: number }) {
       where: {
         id,
       },
-      select: userSelectFields,
+      select: {
+        ...userSelectFields,
+        _count: {
+          select: {
+            followers: true,
+            following: true,
+            posts: true,
+          },
+        },
+      },
     });
   } catch (error) {
     console.error(error);
@@ -55,6 +64,13 @@ async function fetchByUsername({ username }: { username: string }) {
       select: {
         username: true,
         avatarUrl: true,
+        _count: {
+          select: {
+            followers: true,
+            following: true,
+            posts: true,
+          },
+        },
       },
     });
   } catch (error) {

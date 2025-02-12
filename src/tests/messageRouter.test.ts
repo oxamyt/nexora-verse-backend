@@ -11,19 +11,15 @@ import passport from "../utils/passportConfig";
 import { cleanupDatabase } from "../utils/cleanupDatabase";
 import { setupSocketHandlers } from "../socketHandlers/socketHandlers";
 
-function waitFor(socket: ServerSocket | ClientSocket, event: string) {
-  return new Promise((resolve) => {
-    socket.once(event, resolve);
-  });
-}
-
 describe("Message Router", () => {
   let io: Server, serverSocket: ServerSocket, clientSocket: ClientSocket;
   let app: express.Express;
 
   app = express();
   const httpServer = createServer(app);
-  io = new Server(httpServer);
+  io = new Server(httpServer, {
+    cors: { origin: "*", methods: ["GET", "POST", "DELETE", "PATCH"] },
+  });
   app.use(passport.initialize());
   app.use(express.json());
   app.use("/auth", authRouter);
