@@ -28,7 +28,6 @@ async function updateUser(req: Request, res: Response) {
   try {
     const { username, bio } = req.body;
     const user = req.user;
-
     if (user) {
       const updatedUser = await updateUserService({
         username,

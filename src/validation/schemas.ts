@@ -44,13 +44,9 @@ const updateUserDataSchema = z
       .min(3, { message: "Username must be at least 3 characters long." })
       .max(15, { message: "Username must not exceed 15 characters." })
       .optional(),
-    bio: z
-      .string()
-      .min(3, { message: "Bio must be at least 3 characters long." })
-      .max(80, { message: "Bio must not exceed 80 characters." })
-      .optional(),
+    bio: z.string().max(80).nullable().or(z.literal("")),
   })
-  .refine((data) => data.username || data.bio, {
+  .refine((data) => data.username || data.bio !== undefined, {
     message: "At least one of 'username' or 'bio' must be provided.",
     path: ["username", "bio"],
   });

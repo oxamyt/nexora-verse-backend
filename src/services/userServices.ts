@@ -21,9 +21,7 @@ async function updateUserService({ username, bio, id }: UserUpdateData) {
       updatedUser = await updateUsername({ username, id });
     }
 
-    if (bio) {
-      updatedProfile = await updateProfileBio({ bio, id });
-    }
+    updatedProfile = await updateProfileBio({ bio, id });
 
     return { updatedUser, updatedProfile, statusCode: 200 };
   } catch (error) {

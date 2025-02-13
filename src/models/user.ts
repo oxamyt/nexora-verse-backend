@@ -40,6 +40,11 @@ async function findUserById({ id }: { id: number }) {
       },
       select: {
         ...userSelectFields,
+        profile: {
+          select: {
+            bio: true,
+          },
+        },
         _count: {
           select: {
             followers: true,
