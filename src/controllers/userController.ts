@@ -5,16 +5,24 @@ import { updateUserService } from "../services/userServices";
 async function getUsers(req: Request, res: Response) {
   try {
     const { id, username } = req.query;
+    const user = req.user;
 
-    if (id) {
-      const user = await findUserById({ id: parseInt(id as string) });
-      res.status(200).json(user);
-    } else if (username) {
-      const user = await fetchByUsername({ username: username as string });
-      res.status(200).json(user);
+    if (user) {
+      if (id) {
+        const retrievedUser = await findUserById({
+          id: parseInt(id as string),
+          requesterId: parseInt(user.id),
+        });
+        res.status(200).json(retrievedUser);
+      } else if (username) {
+        const user = await fetchByUsername({ username: username as string });
+        res.status(200).json(user);
+      } else {
+        const users = await fetchUsers();
+        res.status(200).json(users);
+      }
     } else {
-      const users = await fetchUsers();
-      res.status(200).json(users);
+      res.status(400).json({ error: "No user detected." });
     }
   } catch (error) {
     console.error("Error during fetching users:", error);

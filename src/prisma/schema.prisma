@@ -89,8 +89,8 @@ model Follow {
   id         Int  @id @default(autoincrement())
   followerId Int
   followedId Int
-  follower   User @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
-  following  User @relation("Following", fields: [followedId], references: [id], onDelete: Cascade)
+  follower   User @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)  
+  following  User @relation("Follower", fields: [followedId], references: [id], onDelete: Cascade) 
 
-   @@unique([followerId, followedId])
+  @@unique([followerId, followedId])
 }

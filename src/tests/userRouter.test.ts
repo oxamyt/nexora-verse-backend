@@ -48,7 +48,21 @@ describe("User Router", async () => {
         .expect("Content-Type", /json/)
         .expect(201);
     }
-    const fetchResponse = await request(app).get("/users").expect(200);
+
+    const loginResponse = await request(app)
+      .post("/auth/login")
+      .send({
+        username: "john",
+        password: "password123",
+      })
+      .expect(200);
+
+    const token = loginResponse.body.token;
+
+    const fetchResponse = await request(app)
+      .get("/users")
+      .set("Authorization", `Bearer ${token}`)
+      .expect(200);
 
     const usersResponse = fetchResponse.body;
 
@@ -87,14 +101,16 @@ describe("User Router", async () => {
       .expect(200);
 
     const userId = loginResponse.body.userId;
+    const token = loginResponse.body.token;
 
     const fetchIdResponse = await request(app)
       .get(`/users?id=${userId}`)
+      .set("Authorization", `Bearer ${token}`)
       .expect(200);
 
-    const fetchUsernameResponse = await request(app).get(
-      "/users?username=harry"
-    );
+    const fetchUsernameResponse = await request(app)
+      .get("/users?username=harry")
+      .set("Authorization", `Bearer ${token}`);
 
     expect(fetchIdResponse.body).toMatchObject({ username: "john" });
     expect(fetchUsernameResponse.body).toMatchObject({ username: "harry" });

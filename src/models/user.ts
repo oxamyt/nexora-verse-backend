@@ -32,28 +32,47 @@ async function fetchUsers() {
   }
 }
 
-async function findUserById({ id }: { id: number }) {
+async function findUserById({
+  id,
+  requesterId,
+}: {
+  id: number;
+  requesterId: number;
+}) {
   try {
-    return await prisma.user.findUnique({
-      where: {
-        id,
-      },
+    const user = await prisma.user.findUnique({
+      where: { id },
       select: {
         ...userSelectFields,
-        profile: {
-          select: {
-            bio: true,
-          },
-        },
+        profile: { select: { bio: true } },
         _count: {
           select: {
+            posts: true,
             followers: true,
             following: true,
-            posts: true,
           },
+        },
+        followers: {
+          where: {
+            followerId: requesterId,
+            followedId: id,
+          },
+          select: {
+            followerId: true,
+          },
+          take: 1,
         },
       },
     });
+
+    if (!user) return null;
+
+    const isFollowedByRequester = user.followers.length > 0;
+
+    return {
+      ...user,
+      isFollowedByRequester,
+    };
   } catch (error) {
     console.error(error);
     throw error;
@@ -62,24 +81,25 @@ async function findUserById({ id }: { id: number }) {
 
 async function fetchByUsername({ username }: { username: string }) {
   try {
-    return await prisma.user.findUnique({
-      where: {
-        username,
-      },
+    const user = await prisma.user.findUnique({
+      where: { username },
       select: {
-        username: true,
-        avatarUrl: true,
+        ...userSelectFields,
+        profile: { select: { bio: true } },
         _count: {
           select: {
+            posts: true,
             followers: true,
             following: true,
-            posts: true,
           },
         },
       },
     });
+    if (!user) return null;
+    return user;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }
 

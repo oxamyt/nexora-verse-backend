@@ -6,7 +6,7 @@ import { updateUserDataSchema } from "../validation/schemas";
 
 const userRouter = Router();
 
-userRouter.get("/", getUsers);
+userRouter.get("/", passport.authenticate("jwt", { session: false }), getUsers);
 
 userRouter.patch(
   "/",
