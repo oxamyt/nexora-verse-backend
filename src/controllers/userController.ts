@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { fetchUsers, findUserById, fetchByUsername } from "../models/user";
 import { updateUserService } from "../services/userServices";
+import cloudinary from "../utils/cloudinary";
 
 async function getUsers(req: Request, res: Response) {
   try {
@@ -51,7 +52,22 @@ async function updateUser(req: Request, res: Response) {
   } catch (error) {
     console.error("Error during updating user:", error);
     res.status(500).json({
-      error: "Internal server error during updating user",
+      error: "Internal server error during updating user.",
+    });
+  }
+}
+
+async function updateAvatar(req: Request, res: Response) {
+  try {
+    const file = req.file;
+    const user = req.user;
+    if (!file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+  } catch (error) {
+    console.error("Error during updating user avatar:", error);
+    res.status(500).json({
+      error: " Internal server error during updating user avatar.",
     });
   }
 }

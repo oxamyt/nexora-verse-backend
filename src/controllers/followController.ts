@@ -43,6 +43,7 @@ async function getFollowed(req: Request, res: Response) {
 
 async function getFollowers(req: Request, res: Response) {
   const userId = parseInt(req.params.id);
+
   try {
     if (!userId) {
       res.status(401).json({ error: "No user id found." });

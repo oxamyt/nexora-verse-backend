@@ -37,7 +37,7 @@ async function findUserById({
   requesterId,
 }: {
   id: number;
-  requesterId: number;
+  requesterId?: number;
 }) {
   try {
     const user = await prisma.user.findUnique({
