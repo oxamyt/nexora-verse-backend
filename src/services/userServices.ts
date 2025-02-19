@@ -1,7 +1,7 @@
 import { UserUpdateData } from "../types/types";
 import { fetchByUsername, findUserById } from "../models/user";
 import { updateUsername } from "../models/user";
-import { updateProfileBio } from "../models/profile";
+import { updateProfileBio, updateBanner } from "../models/profile";
 import cloudinary from "../utils/cloudinary";
 import { updateAvatar } from "../models/user";
 import type { Express } from "express";
@@ -70,4 +70,41 @@ async function updateAvatarService({
   }
 }
 
-export { updateUserService, updateAvatarService };
+async function updateBannerService({
+  file,
+  userId,
+}: {
+  file: Express.Multer.File;
+  userId: number;
+}) {
+  try {
+    const user = await findUserById({ id: userId });
+    if (!user) {
+      return { error: "User not found.", statusCode: 400 };
+    }
+
+    const result = await new Promise((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream({ folder: "nexora-banners" }, (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        })
+        .end(file.buffer);
+    });
+
+    if (!result) {
+      throw new Error("Failed to upload image to Cloudinary");
+    }
+
+    const bannerUrl = (result as any).secure_url;
+
+    await updateBanner({ bannerUrl, userId: user.id });
+
+    return { message: "Banner successfully updated.", statusCode: 200 };
+  } catch (error) {
+    console.error("Error in updateBanner service:", error);
+    return { statusCode: 500 };
+  }
+}
+
+export { updateUserService, updateAvatarService, updateBannerService };

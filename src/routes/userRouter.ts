@@ -3,6 +3,7 @@ import {
   getUsers,
   updateUser,
   updateAvatar,
+  updateBanner,
 } from "../controllers/userController";
 import passport from "passport";
 import { validateData } from "../middlewares/validationMiddleware";
@@ -31,6 +32,13 @@ userRouter.patch(
   passport.authenticate("jwt", { session: false }),
   upload.single("avatar"),
   updateAvatar
+);
+
+userRouter.patch(
+  "/banner",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("banner"),
+  updateBanner
 );
 
 export default userRouter;

@@ -35,4 +35,24 @@ async function updateProfileBio({ bio, id }: UserUpdateData) {
   }
 }
 
-export { updateProfileBio, createProfile };
+async function updateBanner({
+  bannerUrl,
+  userId,
+}: {
+  bannerUrl: string;
+  userId: number;
+}) {
+  try {
+    return await prisma.profile.update({
+      where: { userId },
+      data: {
+        bannerUrl,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export { updateProfileBio, createProfile, updateBanner };

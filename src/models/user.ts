@@ -45,7 +45,7 @@ async function findUserById({
       where: { id },
       select: {
         ...userSelectFields,
-        profile: { select: { bio: true } },
+        profile: { select: { bio: true, bannerUrl: true } },
         _count: {
           select: {
             posts: true,
