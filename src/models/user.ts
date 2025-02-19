@@ -18,6 +18,7 @@ async function findUser({ username }: { username: string }) {
     });
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }
 
@@ -113,6 +114,7 @@ async function createUser({ username, password }: UserData) {
     });
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }
 
@@ -128,6 +130,27 @@ async function updateUsername({ username, id }: UserUpdateData) {
     });
   } catch (error) {
     console.error(error);
+    throw error;
+  }
+}
+
+async function updateAvatar({
+  avatarUrl,
+  userId,
+}: {
+  avatarUrl: string;
+  userId: number;
+}) {
+  try {
+    return await prisma.user.update({
+      where: { id: userId },
+      data: {
+        avatarUrl,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 }
 
@@ -138,4 +161,5 @@ export {
   fetchByUsername,
   createUser,
   updateUsername,
+  updateAvatar,
 };

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { fetchUsers, findUserById, fetchByUsername } from "../models/user";
 import { updateUserService } from "../services/userServices";
 import cloudinary from "../utils/cloudinary";
+import { updateAvatarService } from "../services/userServices";
 
 async function getUsers(req: Request, res: Response) {
   try {
@@ -61,8 +62,21 @@ async function updateAvatar(req: Request, res: Response) {
   try {
     const file = req.file;
     const user = req.user;
-    if (!file) {
-      return res.status(400).json({ message: "No file uploaded" });
+
+    if (!user) {
+      res.status(400).json({ error: "No user detected." });
+    } else {
+      if (file && file.mimetype.startsWith("image/")) {
+        const result = await updateAvatarService({
+          file,
+          userId: parseInt(user.id),
+        });
+        if (result.statusCode === 200) {
+          res.status(result.statusCode).json({ message: result.message });
+        } else {
+          res.status(result.statusCode).json({ error: result.error });
+        }
+      }
     }
   } catch (error) {
     console.error("Error during updating user avatar:", error);
@@ -72,4 +86,4 @@ async function updateAvatar(req: Request, res: Response) {
   }
 }
 
-export { getUsers, updateUser };
+export { getUsers, updateUser, updateAvatar };

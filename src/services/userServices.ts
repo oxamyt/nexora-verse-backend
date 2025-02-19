@@ -3,6 +3,8 @@ import { fetchByUsername, findUserById } from "../models/user";
 import { updateUsername } from "../models/user";
 import { updateProfileBio } from "../models/profile";
 import cloudinary from "../utils/cloudinary";
+import { updateAvatar } from "../models/user";
+import type { Express } from "express";
 
 async function updateUserService({ username, bio, id }: UserUpdateData) {
   try {
@@ -31,11 +33,22 @@ async function updateUserService({ username, bio, id }: UserUpdateData) {
   }
 }
 
-async function UpdateAvatarService({ file, userId }) {
+async function updateAvatarService({
+  file,
+  userId,
+}: {
+  file: Express.Multer.File;
+  userId: number;
+}) {
   try {
+    const user = await findUserById({ id: userId });
+    if (!user) {
+      return { error: "User not found.", statusCode: 400 };
+    }
+
     const result = await new Promise((resolve, reject) => {
       cloudinary.uploader
-        .upload_stream({ folder: "avatars" }, (error, result) => {
+        .upload_stream({ folder: "nexora-avatars" }, (error, result) => {
           if (error) return reject(error);
           resolve(result);
         })
@@ -46,11 +59,15 @@ async function UpdateAvatarService({ file, userId }) {
       throw new Error("Failed to upload image to Cloudinary");
     }
 
-    const user = await findUserById({ id: userId });
+    const avatarUrl = (result as any).secure_url;
+
+    await updateAvatar({ avatarUrl, userId: user.id });
+
+    return { message: "Avatar successfully updated.", statusCode: 200 };
   } catch (error) {
     console.error("Error in updateAvatar service:", error);
     return { statusCode: 500 };
   }
 }
 
-export { updateUserService };
+export { updateUserService, updateAvatarService };

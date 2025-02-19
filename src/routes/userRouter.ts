@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { getUsers, updateUser } from "../controllers/userController";
+import {
+  getUsers,
+  updateUser,
+  updateAvatar,
+} from "../controllers/userController";
 import passport from "passport";
 import { validateData } from "../middlewares/validationMiddleware";
 import { updateUserDataSchema } from "../validation/schemas";
@@ -23,8 +27,9 @@ userRouter.patch(
 );
 
 userRouter.patch(
-  "/",
-  passport.authenticate("jwt", { session: false }, upload.single("avatar")),
+  "/avatar",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("avatar"),
   updateAvatar
 );
 
