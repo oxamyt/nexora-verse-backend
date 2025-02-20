@@ -38,6 +38,15 @@ async function getUserPosts({ userId }: { userId: number }) {
       orderBy: {
         createdAt: "desc",
       },
+      include: {
+        User: {
+          select: {
+            id: true,
+            username: true,
+            avatarUrl: true,
+          },
+        },
+      },
     });
   } catch (error) {
     console.error(error);

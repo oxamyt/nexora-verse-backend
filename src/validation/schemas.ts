@@ -57,12 +57,12 @@ const createPostSchema = z.object({
   title: z
     .string()
     .trim()
-    .min(3, { message: "Title must be at least 3 characters long." })
+    .min(1, { message: "Title must be at least 1 characters long." })
     .max(30, { message: "Title must not exceed 30 characters." }),
   body: z
     .string()
-    .min(10, { message: "Body must be at least 3 characters long." })
-    .max(300, { message: "Body must not exceed 80 characters." })
+    .min(1, { message: "Body must be at least 1 characters long." })
+    .max(300, { message: "Body must not exceed 300 characters." })
     .optional(),
 });
 
