@@ -35,7 +35,14 @@ async function githubLogin(req: Request, res: Response) {
   try {
     if (user) {
       const githubAuthResponse = await githubLoginService(user);
-      res.status(githubAuthResponse.statusCode).json(githubAuthResponse);
+
+      if (githubAuthResponse.statusCode === 200) {
+        res.redirect(
+          `${process.env.FRONTEND_URL}#token=${githubAuthResponse.token}&userId=${user.id}`
+        );
+      } else {
+        res.status(githubAuthResponse.statusCode).json(githubAuthResponse);
+      }
     } else {
       res.status(400).json({ error: "No user detected." });
     }
