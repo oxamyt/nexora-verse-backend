@@ -305,7 +305,7 @@ describe("Post Router", async () => {
     }
 
     const getPostsResponse = await request(app)
-      .get(`/posts/${userId}`)
+      .get(`/posts/user/${userId}`)
       .set("Authorization", `Bearer ${token}`)
       .expect(200);
 
@@ -423,7 +423,6 @@ describe("Post Router", async () => {
       postIds.push(postResponse.body.newPost.id);
     }
 
-    // Create a post without a like
     const notLikedPost = {
       title: "Not liked post",
       body: "Regular body for the post!",
@@ -468,5 +467,44 @@ describe("Post Router", async () => {
     );
 
     expect(likedPostsResponse.body.length).toBe(posts.length);
+  });
+
+  it("user should be able to fetch post by ID", async () => {
+    await request(app).post("/auth/signup").send({
+      username: "john",
+      password: "password123",
+      confirm: "password123",
+    });
+
+    const loginResponse = await request(app)
+      .post("/auth/login")
+      .send({
+        username: "john",
+        password: "password123",
+      })
+      .expect(200);
+
+    const token = loginResponse.body.token;
+
+    const response = await request(app)
+      .post("/posts")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        title: "How to cook a steak",
+        body: "You need to fry it for 5 mins on every side!",
+      })
+      .expect(201);
+
+    const postResponse = await request(app)
+      .get(`/posts/${response.body.newPost.id}`)
+      .set("Authorization", `Bearer ${token}`)
+      .expect(200);
+
+    expect(postResponse.body).toEqual(
+      expect.objectContaining({
+        title: "How to cook a steak",
+        body: "You need to fry it for 5 mins on every side!",
+      })
+    );
   });
 });

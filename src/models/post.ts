@@ -122,6 +122,19 @@ async function deletePost({ id }: { id: number }) {
   }
 }
 
+async function fetchPostById({ id }: { id: number }) {
+  try {
+    return await prisma.post.findUnique({
+      where: {
+        id,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export {
   createNewPost,
   updatePost,
@@ -130,4 +143,5 @@ export {
   retrieveRecentPosts,
   retrieveLikedPosts,
   deletePost,
+  fetchPostById,
 };

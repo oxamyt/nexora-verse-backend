@@ -4,6 +4,7 @@ import {
   getUserPosts,
   retrieveRecentPosts,
   retrieveLikedPosts,
+  fetchPostById,
 } from "../models/post";
 import { updatePostService, deletePostService } from "../services/postServices";
 
@@ -31,7 +32,7 @@ async function createPost(req: Request, res: Response) {
 }
 
 async function getPosts(req: Request, res: Response) {
-  const userId = req.params.id;
+  const userId = req.params.userId;
 
   try {
     if (!userId) {
@@ -39,6 +40,24 @@ async function getPosts(req: Request, res: Response) {
     } else {
       const posts = await getUserPosts({ userId: parseInt(userId) });
       res.status(200).json(posts);
+    }
+  } catch (error) {
+    console.error("Error during fetching user`s post:", error);
+    res.status(500).json({
+      error: "Internal server error during getting posts by user id.",
+    });
+  }
+}
+
+async function getPostById(req: Request, res: Response) {
+  const postId = req.params.id;
+
+  try {
+    if (!postId) {
+      res.status(400).json({ error: "No post id found." });
+    } else {
+      const post = await fetchPostById({ id: parseInt(postId) });
+      res.status(200).json(post);
     }
   } catch (error) {
     console.error("Error during fetching user`s post:", error);
@@ -139,4 +158,5 @@ export {
   getPosts,
   getRecentPosts,
   getLikedPosts,
+  getPostById,
 };
