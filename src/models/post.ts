@@ -128,6 +128,15 @@ async function fetchPostById({ id }: { id: number }) {
       where: {
         id,
       },
+      include: {
+        User: {
+          select: {
+            id: true,
+            username: true,
+            avatarUrl: true,
+          },
+        },
+      },
     });
   } catch (error) {
     console.error(error);
