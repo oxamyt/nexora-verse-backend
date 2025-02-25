@@ -61,6 +61,15 @@ async function retrieveRecentPosts() {
       orderBy: {
         createdAt: "desc",
       },
+      include: {
+        User: {
+          select: {
+            id: true,
+            username: true,
+            avatarUrl: true,
+          },
+        },
+      },
     });
   } catch (error) {
     console.error(error);
@@ -144,6 +153,37 @@ async function fetchPostById({ id }: { id: number }) {
   }
 }
 
+async function retrieveFollowingPosts({ id }: { id: number }) {
+  try {
+    return await prisma.post.findMany({
+      where: {
+        User: {
+          followers: {
+            some: {
+              followerId: id,
+            },
+          },
+        },
+      },
+      include: {
+        User: {
+          select: {
+            id: true,
+            username: true,
+            avatarUrl: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export {
   createNewPost,
   updatePost,
@@ -153,4 +193,5 @@ export {
   retrieveLikedPosts,
   deletePost,
   fetchPostById,
+  retrieveFollowingPosts,
 };

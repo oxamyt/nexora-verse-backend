@@ -5,6 +5,7 @@ import {
   retrieveRecentPosts,
   retrieveLikedPosts,
   fetchPostById,
+  retrieveFollowingPosts,
 } from "../models/post";
 import { updatePostService, deletePostService } from "../services/postServices";
 
@@ -151,6 +152,26 @@ async function deletePost(req: Request, res: Response) {
   }
 }
 
+async function getFollowingPosts(req: Request, res: Response) {
+  const user = req.user;
+
+  try {
+    if (!user) {
+      res.status(401).json({ error: "Unauthorized: User not authenticated." });
+    } else {
+      const followingPosts = await retrieveFollowingPosts({
+        id: parseInt(user.id),
+      });
+      res.status(200).json(followingPosts);
+    }
+  } catch (error) {
+    console.error("Error during fetching following posts:", error);
+    res
+      .status(500)
+      .json({ error: "Internal sever error during getting following posts." });
+  }
+}
+
 export {
   createPost,
   updatePost,
@@ -159,4 +180,5 @@ export {
   getRecentPosts,
   getLikedPosts,
   getPostById,
+  getFollowingPosts,
 };
