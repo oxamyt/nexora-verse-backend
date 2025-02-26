@@ -11,9 +11,10 @@ const userSelectFields = {
 
 async function findUser({ username }: { username: string }) {
   try {
+    const lowercaseUsername = username.toLowerCase();
     return await prisma.user.findUnique({
       where: {
-        username,
+        username: lowercaseUsername,
       },
     });
   } catch (error) {
@@ -82,8 +83,13 @@ async function findUserById({
 
 async function fetchByUsername({ username }: { username: string }) {
   try {
-    const user = await prisma.user.findUnique({
-      where: { username },
+    const user = await prisma.user.findFirst({
+      where: {
+        username: {
+          equals: username,
+          mode: "insensitive",
+        },
+      },
       select: {
         ...userSelectFields,
         profile: { select: { bio: true } },
@@ -106,9 +112,10 @@ async function fetchByUsername({ username }: { username: string }) {
 
 async function createUser({ username, password }: UserData) {
   try {
+    const lowercaseUsername = username.toLowerCase();
     return await prisma.user.create({
       data: {
-        username,
+        username: lowercaseUsername,
         password,
       },
     });
@@ -120,14 +127,19 @@ async function createUser({ username, password }: UserData) {
 
 async function updateUsername({ username, id }: UserUpdateData) {
   try {
-    return await prisma.user.update({
-      where: { id },
-      data: { username },
-      select: {
-        username: true,
-        id: true,
-      },
-    });
+    if (username) {
+      const lowercaseUsername = username.toLowerCase();
+      return await prisma.user.update({
+        where: { id },
+        data: { username: lowercaseUsername },
+        select: {
+          username: true,
+          id: true,
+        },
+      });
+    } else {
+      return;
+    }
   } catch (error) {
     console.error(error);
     throw error;
