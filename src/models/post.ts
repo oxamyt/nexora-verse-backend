@@ -149,6 +149,18 @@ async function retrieveLikedPosts({ userId }: { userId: number }) {
         },
       },
       include: {
+        User: {
+          select: {
+            id: true,
+            username: true,
+            avatarUrl: true,
+          },
+        },
+        likes: {
+          select: {
+            userId: true,
+          },
+        },
         _count: {
           select: {
             likes: true,

@@ -452,7 +452,7 @@ describe("Post Router", async () => {
     }
 
     const likedPostsResponse = await request(app)
-      .get("/posts/liked")
+      .get(`/posts/liked/${secondUserLogin.body.userId}`)
       .set("Authorization", `Bearer ${token}`)
       .expect(200);
 

@@ -83,12 +83,12 @@ async function getRecentPosts(req: Request, res: Response) {
 
 async function getLikedPosts(req: Request, res: Response) {
   const user = req.user;
-
+  const { id } = req.params;
   try {
     if (!user) {
       res.status(401).json({ error: "Unauthorized: User not authenticated." });
     } else {
-      const posts = await retrieveLikedPosts({ userId: parseInt(user.id) });
+      const posts = await retrieveLikedPosts({ userId: parseInt(id) });
       res.status(200).json(posts);
     }
   } catch (error) {

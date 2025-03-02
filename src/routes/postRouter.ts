@@ -23,7 +23,7 @@ postRouter.post(
 );
 
 postRouter.get(
-  "/liked",
+  "/liked/:id",
   passport.authenticate("jwt", { session: false }),
   getLikedPosts
 );
