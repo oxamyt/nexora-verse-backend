@@ -264,6 +264,16 @@ async function fetchPostById({ id }: { id: number }) {
                 avatarUrl: true,
               },
             },
+            likes: {
+              select: {
+                userId: true,
+              },
+            },
+            _count: {
+              select: {
+                likes: true,
+              },
+            },
           },
           orderBy: {
             createdAt: "asc",

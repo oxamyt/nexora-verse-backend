@@ -19,6 +19,22 @@ async function retrieveMessages({ userId, targetId }: RetrieveMessagesData) {
       orderBy: {
         createdAt: "asc",
       },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            username: true,
+            avatarUrl: true,
+          },
+        },
+        receiver: {
+          select: {
+            id: true,
+            username: true,
+            avatarUrl: true,
+          },
+        },
+      },
     });
   } catch (error) {
     console.error("Error retrieving messages:", error);
@@ -33,6 +49,22 @@ async function createMessage({ body, senderId, receiverId }: MessageData) {
         body,
         senderId,
         receiverId,
+      },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            username: true,
+            avatarUrl: true,
+          },
+        },
+        receiver: {
+          select: {
+            id: true,
+            username: true,
+            avatarUrl: true,
+          },
+        },
       },
     });
   } catch (error) {

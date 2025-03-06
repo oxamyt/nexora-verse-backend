@@ -11,6 +11,11 @@ async function setupSocketHandlers(io: Server) {
       socket.emit("joinChat", { roomName });
     });
 
+    socket.on("leaveChat", ({ userId, chatPartnerId }) => {
+      const roomName = [userId, chatPartnerId].sort().join("-");
+      socket.leave(roomName);
+    });
+
     socket.on("disconnect", () => {
       console.log("user disconnected:", socket.id);
     });

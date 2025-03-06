@@ -33,6 +33,7 @@ async function sendMessage(io: Server, req: Request, res: Response) {
   const { body } = req.body;
   const user = req.user;
   const receiverId = parseInt(req.params.id);
+
   if (isNaN(receiverId)) {
     res.status(400).json({ error: "Invalid receiver ID." });
   }
