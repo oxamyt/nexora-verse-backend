@@ -17,8 +17,9 @@ async function retrieveMessages({ userId, targetId }: RetrieveMessagesData) {
         ],
       },
       orderBy: {
-        createdAt: "asc",
+        createdAt: "desc",
       },
+
       include: {
         sender: {
           select: {
@@ -93,6 +94,22 @@ async function updateMessage({ id, body }: UpdateMessageModel) {
       data: {
         id,
         body,
+      },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            username: true,
+            avatarUrl: true,
+          },
+        },
+        receiver: {
+          select: {
+            id: true,
+            username: true,
+            avatarUrl: true,
+          },
+        },
       },
     });
   } catch (error) {

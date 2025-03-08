@@ -87,6 +87,7 @@ async function updateMessage(io: Server, req: Request, res: Response) {
         const roomName = [senderId, receiverId].sort().join("-");
 
         const updatedMessage = result.updatedMessage;
+
         io.to(roomName).emit("updateMessage", updatedMessage);
 
         res.status(result.statusCode).json(updatedMessage);
