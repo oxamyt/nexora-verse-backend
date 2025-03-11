@@ -44,6 +44,7 @@ model Post {
   updatedAt DateTime  @updatedAt
   title     String
   body      String?
+  imageUrl  String?
   likes     Like[]
   User      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
