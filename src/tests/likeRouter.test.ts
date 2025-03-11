@@ -55,7 +55,7 @@ describe("Like Router", async () => {
       })
       .expect(201);
 
-    const postId = postResponse.body.newPost.id;
+    const postId = postResponse.body.id;
 
     await request(app)
       .patch(`/likes/post/${postId}`)
@@ -89,7 +89,7 @@ describe("Like Router", async () => {
       })
       .expect(201);
 
-    const postId = postResponse.body.newPost.id;
+    const postId = postResponse.body.id;
 
     const data = { content: "Great tutorial!" };
 

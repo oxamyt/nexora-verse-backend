@@ -1,3 +1,4 @@
+import type { Express } from "express";
 interface UserData {
   username: string;
   password: string;
@@ -12,7 +13,9 @@ interface UserUpdateData {
 interface CreatePostData {
   title: string;
   body?: string;
+  imageUrl?: string;
   userId: number;
+  file?: Express.Multer.File;
 }
 
 interface UpdatePostData {

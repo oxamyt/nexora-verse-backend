@@ -3,13 +3,19 @@ import { CreatePostData, UpdatePostData } from "../types/types";
 
 const prisma = new PrismaClient();
 
-async function createNewPost({ title, body, userId }: CreatePostData) {
+async function createNewPost({
+  title,
+  body,
+  userId,
+  imageUrl,
+}: CreatePostData) {
   try {
     return await prisma.post.create({
       data: {
         title,
         body: body || null,
         userId,
+        imageUrl: imageUrl || null,
       },
     });
   } catch (error) {

@@ -55,7 +55,7 @@ describe("Comment Router", async () => {
       })
       .expect(201);
 
-    const postId = postResponse.body.newPost.id;
+    const postId = postResponse.body.id;
 
     const data = { content: "Great tutorial!" };
 
@@ -94,7 +94,7 @@ describe("Comment Router", async () => {
       })
       .expect(201);
 
-    const postId = postResponse.body.newPost.id;
+    const postId = postResponse.body.id;
 
     const data = { content: "Great tutorial!" };
 
@@ -149,7 +149,7 @@ describe("Comment Router", async () => {
       })
       .expect(201);
 
-    const postId = postResponse.body.newPost.id;
+    const postId = postResponse.body.id;
 
     const data = { content: "Great tutorial!" };
 
@@ -206,7 +206,7 @@ describe("Comment Router", async () => {
       })
       .expect(201);
 
-    const postId = postResponse.body.newPost.id;
+    const postId = postResponse.body.id;
 
     const data = { content: "Great tutorial!" };
 
@@ -256,7 +256,7 @@ describe("Comment Router", async () => {
       })
       .expect(201);
 
-    const postId = postResponse.body.newPost.id;
+    const postId = postResponse.body.id;
 
     const data = { content: "Great tutorial!" };
 

@@ -12,12 +12,14 @@ import {
   getFollowingPosts,
 } from "../controllers/postController";
 import passport from "passport";
+import upload from "../utils/multerSetup";
 
 const postRouter = Router();
 
 postRouter.post(
   "/",
   passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
   validateData(createPostSchema),
   createPost
 );

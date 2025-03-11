@@ -1,5 +1,45 @@
 import { EditPostParams } from "../types/types";
-import { getPost, updatePost, deletePost } from "../models/post";
+import { createNewPost, getPost, updatePost, deletePost } from "../models/post";
+import { CreatePostData } from "../types/types";
+import cloudinary from "../utils/cloudinary";
+
+async function createPostService({
+  file,
+  title,
+  body,
+  userId,
+}: CreatePostData) {
+  try {
+    let imageUrl;
+    if (file) {
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream({ folder: "nexora-post-images" }, (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          })
+          .end(file.buffer);
+      });
+
+      if (!result) {
+        throw new Error("Failed to upload image to Cloudinary");
+      }
+
+      imageUrl = (result as any).secure_url;
+    }
+    const newPost = await createNewPost({
+      title,
+      body,
+      userId,
+      imageUrl,
+    });
+
+    return { newPost, statusCode: 201 };
+  } catch (error) {
+    console.error("Error in createPost service:", error);
+    return { statusCode: 500, error: "Error during creating post." };
+  }
+}
 
 async function updatePostService({
   postId,
@@ -64,4 +104,4 @@ async function deletePostService({
   }
 }
 
-export { updatePostService, deletePostService };
+export { createPostService, updatePostService, deletePostService };

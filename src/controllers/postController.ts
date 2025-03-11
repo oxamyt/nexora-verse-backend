@@ -7,20 +7,31 @@ import {
   fetchPostById,
   retrieveFollowingPosts,
 } from "../models/post";
-import { updatePostService, deletePostService } from "../services/postServices";
+import {
+  createPostService,
+  updatePostService,
+  deletePostService,
+} from "../services/postServices";
 
 async function createPost(req: Request, res: Response) {
   const { title, body } = req.body;
   const user = req.user;
+  const file = req.file;
 
   try {
     if (user) {
-      const newPost = await createNewPost({
+      const newPost = await createPostService({
+        file,
         title,
         body,
         userId: parseInt(user.id),
       });
-      res.status(201).json({ newPost });
+
+      if (newPost.statusCode === 201) {
+        res.status(newPost.statusCode).json(newPost.newPost);
+      } else {
+        res.status(newPost.statusCode).json({ error: newPost.error });
+      }
     } else {
       res.status(401).json({ error: "No user data found." });
     }
@@ -84,6 +95,7 @@ async function getRecentPosts(req: Request, res: Response) {
 async function getLikedPosts(req: Request, res: Response) {
   const user = req.user;
   const { id } = req.params;
+
   try {
     if (!user) {
       res.status(401).json({ error: "Unauthorized: User not authenticated." });

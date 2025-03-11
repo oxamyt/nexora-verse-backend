@@ -106,7 +106,7 @@ describe("Post Router", async () => {
       })
       .expect(201);
 
-    const postId = postResponse.body.newPost.id;
+    const postId = postResponse.body.id;
 
     const updateData = {
       title: "How to cook pasta",
@@ -155,7 +155,7 @@ describe("Post Router", async () => {
       })
       .expect(201);
 
-    const postId = postResponse.body.newPost.id;
+    const postId = postResponse.body.id;
 
     const updateData = {
       title: "How to cook pasta",
@@ -205,7 +205,7 @@ describe("Post Router", async () => {
       })
       .expect(201);
 
-    const postId = postResponse.body.newPost.id;
+    const postId = postResponse.body.id;
 
     await request(app)
       .delete(`/posts/${postId}`)
@@ -245,7 +245,7 @@ describe("Post Router", async () => {
       })
       .expect(201);
 
-    const postId = postResponse.body.newPost.id;
+    const postId = postResponse.body.id;
 
     const secondLoginResponse = await request(app)
       .post("/auth/login")
@@ -420,7 +420,7 @@ describe("Post Router", async () => {
         .send(post)
         .expect("Content-Type", /json/)
         .expect(201);
-      postIds.push(postResponse.body.newPost.id);
+      postIds.push(postResponse.body.id);
     }
 
     const notLikedPost = {
@@ -496,7 +496,7 @@ describe("Post Router", async () => {
       .expect(201);
 
     const postResponse = await request(app)
-      .get(`/posts/${response.body.newPost.id}`)
+      .get(`/posts/${response.body.id}`)
       .set("Authorization", `Bearer ${token}`)
       .expect(200);
 
