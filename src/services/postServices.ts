@@ -46,6 +46,7 @@ async function updatePostService({
   title,
   body,
   userId,
+  file,
 }: EditPostParams) {
   try {
     const post = await getPost({ id: postId });
@@ -61,7 +62,25 @@ async function updatePostService({
       };
     }
 
-    const updatedPost = await updatePost({ title, body, postId });
+    let imageUrl;
+    if (file) {
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream({ folder: "nexora-post-images" }, (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          })
+          .end(file.buffer);
+      });
+
+      if (!result) {
+        throw new Error("Failed to upload image to Cloudinary");
+      }
+
+      imageUrl = (result as any).secure_url;
+    }
+
+    const updatedPost = await updatePost({ title, body, postId, imageUrl });
     return { updatedPost, statusCode: 200 };
   } catch (error) {
     console.error("Error in updatePost service:", error);

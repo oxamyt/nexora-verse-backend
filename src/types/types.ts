@@ -22,6 +22,7 @@ interface UpdatePostData {
   title?: string;
   body?: string;
   postId: number;
+  imageUrl?: string;
 }
 
 interface EditPostParams {
@@ -29,6 +30,7 @@ interface EditPostParams {
   title?: string;
   body?: string;
   userId: number;
+  file?: Express.Multer.File;
 }
 
 interface PostLikeData {

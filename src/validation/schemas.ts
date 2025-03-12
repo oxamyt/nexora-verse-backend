@@ -74,8 +74,7 @@ const updatePostSchema = z
       .string()
       .trim()
       .min(1, { message: "Title must be at least 1 characters long." })
-      .max(30, { message: "Title must not exceed 30 characters." })
-      .optional(),
+      .max(30, { message: "Title must not exceed 30 characters." }),
     body: z
       .string()
       .min(1, { message: "Body must be at least 1 characters long." })

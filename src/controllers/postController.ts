@@ -114,13 +114,16 @@ async function getLikedPosts(req: Request, res: Response) {
 async function updatePost(req: Request, res: Response) {
   const { title, body } = req.body;
   const postId = req.params.id;
-  const user = req.user;
 
+  const user = req.user;
+  const file = req.file;
+  console.log(postId, "this is id");
   try {
     if (!user) {
       res.status(401).json({ error: "No user data found." });
     } else {
       const result = await updatePostService({
+        file,
         postId: parseInt(postId),
         title,
         body,

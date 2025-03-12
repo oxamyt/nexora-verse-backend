@@ -203,12 +203,14 @@ async function retrieveLikedPosts({ userId }: { userId: number }) {
   }
 }
 
-async function updatePost({ title, body, postId }: UpdatePostData) {
+async function updatePost({ title, body, postId, imageUrl }: UpdatePostData) {
   try {
-    const postUpdateData: { title?: string; body?: string } = {};
+    const postUpdateData: { title?: string; body?: string; imageUrl?: string } =
+      {};
 
     if (title) postUpdateData.title = title;
     if (body !== undefined) postUpdateData.body = body;
+    if (imageUrl) postUpdateData.imageUrl = imageUrl;
 
     return await prisma.post.update({
       where: { id: postId },

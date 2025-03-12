@@ -57,6 +57,7 @@ postRouter.get(
 postRouter.patch(
   "/:id",
   passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
   validateData(updatePostSchema),
   updatePost
 );
