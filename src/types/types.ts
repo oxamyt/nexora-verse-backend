@@ -1,7 +1,8 @@
 import type { Express } from "express";
 interface UserData {
   username: string;
-  password: string;
+  password?: string;
+  isGuest?: boolean;
 }
 
 interface UserUpdateData {

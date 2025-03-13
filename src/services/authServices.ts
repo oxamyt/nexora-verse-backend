@@ -3,6 +3,7 @@ import { findUser, createUser } from "../models/user";
 import { createProfile } from "../models/profile";
 import { UserData } from "../types/types";
 import signToken from "../utils/signToken";
+import { generateUniqueGuestUsername } from "../utils/generateGuestUsername";
 
 async function signupService({ username, password }: UserData) {
   const user = await findUser({ username });
@@ -10,6 +11,13 @@ async function signupService({ username, password }: UserData) {
   if (user) {
     return {
       error: "Username already exists.",
+      statusCode: 400,
+    };
+  }
+
+  if (!password) {
+    return {
+      error: "No password",
       statusCode: 400,
     };
   }
@@ -66,6 +74,13 @@ async function loginService({ username, password }: UserData) {
     };
   }
 
+  if (!password) {
+    return {
+      error: "No password",
+      statusCode: 400,
+    };
+  }
+
   try {
     if (user.password) {
       const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -93,4 +108,28 @@ async function loginService({ username, password }: UserData) {
   }
 }
 
-export { signupService, loginService, githubLoginService };
+async function guestLoginService() {
+  try {
+    const username = await generateUniqueGuestUsername();
+
+    const newUser = await createUser({ username, isGuest: true });
+    await createProfile({ userId: newUser.id });
+
+    const token = signToken({ userId: newUser.id });
+
+    return {
+      token,
+      userId: newUser.id,
+      message: "Guest login successful.",
+      statusCode: 200,
+    };
+  } catch (error) {
+    console.error("Error in guestLogin service:", error);
+    return {
+      error: "Internal server error during guest login service.",
+      statusCode: 500,
+    };
+  }
+}
+
+export { signupService, loginService, githubLoginService, guestLoginService };

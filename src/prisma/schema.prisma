@@ -18,6 +18,7 @@ model User {
   username         String    @unique
   password         String?
   githubId         String? @unique
+  isGuest          Boolean @default(false)
   posts            Post[]
   profile          Profile?
   avatarUrl        String    @default("https://res.cloudinary.com/dehoidlo0/image/upload/v1734176820/messaging-app/r49pwufgvi6inrjc8hlj.png")

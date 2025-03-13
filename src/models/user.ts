@@ -7,6 +7,7 @@ const userSelectFields = {
   username: true,
   avatarUrl: true,
   id: true,
+  isGuest: true,
 };
 
 async function findUser({ username }: { username: string }) {
@@ -110,13 +111,14 @@ async function fetchByUsername({ username }: { username: string }) {
   }
 }
 
-async function createUser({ username, password }: UserData) {
+async function createUser(userData: UserData) {
   try {
-    const lowercaseUsername = username.toLowerCase();
+    const lowercaseUsername = userData.username.toLowerCase();
     return await prisma.user.create({
       data: {
         username: lowercaseUsername,
-        password,
+        password: userData.password,
+        isGuest: userData.isGuest || false,
       },
     });
   } catch (error) {

@@ -1,7 +1,12 @@
 import { Router } from "express";
 import { validateData } from "../middlewares/validationMiddleware";
 import { userSignupSchema, userLoginSchema } from "../validation/schemas";
-import { signup, login, githubLogin } from "../controllers/authController";
+import {
+  signup,
+  login,
+  githubLogin,
+  guestLogin,
+} from "../controllers/authController";
 import passport from "passport";
 
 const authRouter = Router();
@@ -22,5 +27,7 @@ authRouter.get(
   }),
   githubLogin
 );
+
+authRouter.post("/guest", guestLogin);
 
 export default authRouter;

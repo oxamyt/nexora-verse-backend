@@ -2,6 +2,7 @@ import {
   signupService,
   loginService,
   githubLoginService,
+  guestLoginService,
 } from "../services/authServices";
 import { Request, Response } from "express";
 
@@ -54,4 +55,16 @@ async function githubLogin(req: Request, res: Response) {
   }
 }
 
-export { signup, login, githubLogin };
+async function guestLogin(req: Request, res: Response) {
+  try {
+    const guestLoginResponse = await guestLoginService();
+    res.status(guestLoginResponse.statusCode).json(guestLoginResponse);
+  } catch (error) {
+    console.error("Error during guestLogin:", error);
+    res
+      .status(500)
+      .json({ error: "Internal server error during guest login." });
+  }
+}
+
+export { signup, login, githubLogin, guestLogin };

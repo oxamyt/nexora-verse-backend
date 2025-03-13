@@ -99,4 +99,14 @@ describe("Auth Router", async () => {
 
     expect(loginResponse.body.token).not.toBeDefined();
   });
+
+  it("should login a user into guest account", async () => {
+    const guestLoginResponse = await request(app)
+      .post("/auth/guest")
+      .send()
+      .expect(200);
+
+    expect(guestLoginResponse.body.token).toBeDefined();
+    expect(guestLoginResponse.body.token).toBeTypeOf("string");
+  });
 });
