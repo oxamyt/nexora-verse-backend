@@ -2,6 +2,17 @@
 
 RESTful API backend for Nexora Verse social platform, featuring real-time capabilities and secure authentication.
 
+## Screenshots
+
+**Home Feed Interface**  
+![Home Feed](https://res.cloudinary.com/dehoidlo0/image/upload/v1742149302/nexora%20images/zodu8pgucvhvh4cqmiji.png)
+
+**User Profile Page**  
+![User Profile](https://res.cloudinary.com/dehoidlo0/image/upload/v1742149301/nexora%20images/poahietxrf65nfujukko.png)
+
+**Live Chat Feature**  
+![Chat Interface](https://res.cloudinary.com/dehoidlo0/image/upload/v1742149301/nexora%20images/be6icix0tyqa3xgrfdtg.png)
+
 ## Project Overview
 
 The backend service for Nexora Verse social media platform, built with Node.js and Express. Provides core functionality for user interactions, content management, and real-time communication. Frontend repository available [here](https://github.com/oxamyt/nexora-verse-frontend).
