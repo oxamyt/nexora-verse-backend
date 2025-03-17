@@ -53,7 +53,11 @@ async function retrieveFollowed({ userId }: { userId: number }) {
     },
   });
 
-  return follows.map((follow) => follow.following);
+  return follows.map(
+    (follow: {
+      following: { id: number; username: string; avatarUrl: string };
+    }) => follow.following
+  );
 }
 
 async function retrieveFollowers({ userId }: { userId: number }) {
@@ -72,7 +76,11 @@ async function retrieveFollowers({ userId }: { userId: number }) {
     },
   });
 
-  return followers.map((follow) => follow.follower);
+  return followers.map(
+    (follow: {
+      follower: { id: number; username: string; avatarUrl: string };
+    }) => follow.follower
+  );
 }
 
 export { toggleFollow, retrieveFollowed, retrieveFollowers };
