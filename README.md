@@ -64,3 +64,30 @@ The backend service for Nexora Verse social media platform, built with Node.js a
 - **Validation**: Zod
 - **Testing**: Vitest, Supertest
 - **Utilities**: Faker.js, Bcrypt, Cloudinary SDK
+
+## Installation & Running Locally
+
+### Clone the repository
+```sh
+git clone https://github.com/oxamyt/nexora-verse-backend.git
+```
+
+### Navigate to the project folder
+```sh
+cd nexora-verse-backend
+```
+
+### Install dependencies
+```sh
+npm install
+```
+
+### Start the development server
+```sh
+npm run dev
+```
+
+### Run tests
+```sh
+npm run test
+```
